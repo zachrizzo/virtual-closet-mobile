@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert } from 'react-native';
-import { Text, TextInput, Button, SegmentedButtons, Chip, HelperText } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { Text, TextInput, Button, SegmentedButtons, Chip, HelperText, IconButton } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { Image } from 'expo-image';
 import { useForm, Controller } from 'react-hook-form';
+import * as ImagePicker from 'expo-image-picker';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { WardrobeStackParamList } from '@/navigation/TabNavigator';
 import { ClothingCategory, Season, Occasion } from '@/types/clothing';
@@ -29,7 +31,8 @@ interface ClothingForm {
 }
 
 const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
-  const photoUri = route.params?.photoUri;
+  const initialPhotoUri = route.params?.photoUri;
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(initialPhotoUri || null);
   
   const [category, setCategory] = useState<ClothingCategory>(ClothingCategory.TOPS);
   const [selectedSeasons, setSelectedSeasons] = useState<Season[]>([]);
@@ -82,9 +85,41 @@ const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
     setTags(tags.filter(t => t !== tag));
   };
 
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaType.Images,
+      allowsEditing: true,
+      aspect: [3, 4],
+      quality: 0.9,
+    });
+
+    if (!result.canceled) {
+      setSelectedPhoto(result.assets[0].uri);
+    }
+  };
+
+  const takePhoto = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'Camera permission is required to take photos');
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaType.Images,
+      allowsEditing: true,
+      aspect: [3, 4],
+      quality: 0.9,
+    });
+
+    if (!result.canceled) {
+      setSelectedPhoto(result.assets[0].uri);
+    }
+  };
+
   const onSubmit = async (data: ClothingForm) => {
     try {
-      if (!photoUri) {
+      if (!selectedPhoto) {
         Alert.alert('Error', 'Please select a photo');
         return;
       }
@@ -106,10 +141,10 @@ const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
       }).unwrap();
 
       // Upload image
-      if (result.id && photoUri) {
+      if (result.id && selectedPhoto) {
         const formData = new FormData();
         formData.append('file', {
-          uri: photoUri,
+          uri: selectedPhoto,
           type: 'image/jpeg',
           name: 'clothing.jpg',
         } as any);
@@ -132,11 +167,33 @@ const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {photoUri && (
-          <View style={styles.imageContainer}>
-            <Image source={{ uri: photoUri }} style={styles.image} contentFit="cover" />
-          </View>
-        )}
+        <View style={styles.imageContainer}>
+          {selectedPhoto ? (
+            <>
+              <Image source={{ uri: selectedPhoto }} style={styles.image} contentFit="cover" />
+              <IconButton
+                icon="close"
+                size={24}
+                onPress={() => setSelectedPhoto(null)}
+                style={styles.removePhotoButton}
+                iconColor="#fff"
+              />
+            </>
+          ) : (
+            <View style={styles.photoPlaceholder}>
+              <MaterialCommunityIcons name="camera-plus" size={48} color="#666" />
+              <Text style={styles.photoPlaceholderText}>Add Photo</Text>
+              <View style={styles.photoButtons}>
+                <Button mode="contained" onPress={takePhoto} style={styles.photoButton}>
+                  Take Photo
+                </Button>
+                <Button mode="outlined" onPress={pickImage} style={styles.photoButton}>
+                  Choose from Gallery
+                </Button>
+              </View>
+            </View>
+          )}
+        </View>
 
         <View style={styles.form}>
           <Controller
@@ -348,10 +405,37 @@ const styles = StyleSheet.create({
   imageContainer: {
     height: 300,
     backgroundColor: '#f0f0f0',
+    position: 'relative',
   },
   image: {
     width: '100%',
     height: '100%',
+  },
+  removePhotoButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 20,
+  },
+  photoPlaceholder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  photoPlaceholderText: {
+    fontSize: 18,
+    color: '#666',
+    marginTop: 12,
+    marginBottom: 24,
+  },
+  photoButtons: {
+    width: '100%',
+    gap: 12,
+  },
+  photoButton: {
+    marginVertical: 6,
   },
   form: {
     padding: 16,
