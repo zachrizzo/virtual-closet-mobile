@@ -1,0 +1,612 @@
+[
+  {
+    "id": "fdec985a-8b2a-431b-9247-c8cd3bfa9379",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Adidas T-Shirt",
+    "category": "tops",
+    "subcategory": "t-shirt",
+    "brand": "Levi's",
+    "color": {
+      "primary": "Green",
+      "secondary": null
+    },
+    "season": [
+      "summer",
+      "winter"
+    ],
+    "occasion": [
+      "work",
+      "party"
+    ],
+    "size": "XS",
+    "purchase_date": "2025-02-26T14:14:44.233594",
+    "cost": 120.5,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "t-shirt",
+      "favorite"
+    ],
+    "wear_count": 13,
+    "last_worn": null,
+    "is_active": true,
+    "is_favorite": true,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233615",
+    "updated_at": "2025-07-27T14:14:44.233620"
+  },
+  {
+    "id": "4d9e09a4-c9f9-4739-b75f-d261cb09d259",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Gap Blouse",
+    "category": "tops",
+    "subcategory": "blouse",
+    "brand": "Levi's",
+    "color": {
+      "primary": "Brown",
+      "secondary": null
+    },
+    "season": [
+      "summer",
+      "winter"
+    ],
+    "occasion": [
+      "party",
+      "casual"
+    ],
+    "size": "S",
+    "purchase_date": "2024-10-16T14:14:44.233632",
+    "cost": 81.72,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1554568218-0f1715e72254?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1554568218-0f1715e72254?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1554568218-0f1715e72254?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "blouse",
+      "favorite"
+    ],
+    "wear_count": 20,
+    "last_worn": "2025-07-05T14:14:44.233644",
+    "is_active": true,
+    "is_favorite": true,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233648",
+    "updated_at": "2025-07-27T14:14:44.233650"
+  },
+  {
+    "id": "ed0e516d-9a00-4e8f-8d88-4650f96e697d",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Nike Sweater",
+    "category": "tops",
+    "subcategory": "sweater",
+    "brand": "Adidas",
+    "color": {
+      "primary": "Pink",
+      "secondary": null
+    },
+    "season": [
+      "spring",
+      "fall"
+    ],
+    "occasion": [
+      "casual",
+      "date"
+    ],
+    "size": "M",
+    "purchase_date": "2025-05-12T14:14:44.233659",
+    "cost": 116.71,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "sweater"
+    ],
+    "wear_count": 19,
+    "last_worn": null,
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233664",
+    "updated_at": "2025-07-27T14:14:44.233666"
+  },
+  {
+    "id": "c840e9c6-15bf-408f-a48b-b5315ac07824",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Uniqlo Shirt",
+    "category": "tops",
+    "subcategory": "shirt",
+    "brand": "Nike",
+    "color": {
+      "primary": "Beige",
+      "secondary": null
+    },
+    "season": [
+      "summer",
+      "spring"
+    ],
+    "occasion": [
+      "casual",
+      "work"
+    ],
+    "size": "L",
+    "purchase_date": "2025-01-17T14:14:44.233674",
+    "cost": 121.59,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1598032895397-b9472444bf93?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1598032895397-b9472444bf93?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1598032895397-b9472444bf93?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "shirt"
+    ],
+    "wear_count": 4,
+    "last_worn": null,
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233677",
+    "updated_at": "2025-07-27T14:14:44.233678"
+  },
+  {
+    "id": "02948342-ebfb-45f0-8165-19fff393adc0",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Zara Tank Top",
+    "category": "tops",
+    "subcategory": "tank_top",
+    "brand": "Nike",
+    "color": {
+      "primary": "White",
+      "secondary": null
+    },
+    "season": [
+      "spring",
+      "winter"
+    ],
+    "occasion": [
+      "casual",
+      "work"
+    ],
+    "size": "XS",
+    "purchase_date": "2024-07-30T14:14:44.233691",
+    "cost": 61.87,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1571455786673-9d9d6c194f90?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1571455786673-9d9d6c194f90?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1571455786673-9d9d6c194f90?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "tank top"
+    ],
+    "wear_count": 6,
+    "last_worn": null,
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233695",
+    "updated_at": "2025-07-27T14:14:44.233696"
+  },
+  {
+    "id": "c1c881dc-ec9f-4288-8873-6a210f8d7808",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Levi's Jeans",
+    "category": "bottoms",
+    "subcategory": "jeans",
+    "brand": "Uniqlo",
+    "color": {
+      "primary": "Blue",
+      "secondary": null
+    },
+    "season": [
+      "spring",
+      "summer"
+    ],
+    "occasion": [
+      "work",
+      "party"
+    ],
+    "size": "M",
+    "purchase_date": "2024-12-05T14:14:44.233708",
+    "cost": 160.46,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "jeans"
+    ],
+    "wear_count": 1,
+    "last_worn": null,
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233718",
+    "updated_at": "2025-07-27T14:14:44.233723"
+  },
+  {
+    "id": "90ad9234-19d7-48e5-9729-21c05606ea47",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Zara Trousers",
+    "category": "bottoms",
+    "subcategory": "trousers",
+    "brand": "Gap",
+    "color": {
+      "primary": "Navy",
+      "secondary": null
+    },
+    "season": [
+      "fall",
+      "summer"
+    ],
+    "occasion": [
+      "casual",
+      "party"
+    ],
+    "size": "M",
+    "purchase_date": "2024-12-09T14:14:44.233731",
+    "cost": 125.3,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "trousers"
+    ],
+    "wear_count": 1,
+    "last_worn": null,
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233735",
+    "updated_at": "2025-07-27T14:14:44.233737"
+  },
+  {
+    "id": "7fff961d-8cd1-424d-9469-278ebbb7e013",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Uniqlo Skirt",
+    "category": "bottoms",
+    "subcategory": "skirt",
+    "brand": "H&M",
+    "color": {
+      "primary": "Gray",
+      "secondary": null
+    },
+    "season": [
+      "winter",
+      "spring"
+    ],
+    "occasion": [
+      "party",
+      "work"
+    ],
+    "size": "S",
+    "purchase_date": "2024-08-10T14:14:44.233743",
+    "cost": 162.36,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "skirt"
+    ],
+    "wear_count": 7,
+    "last_worn": "2025-07-14T14:14:44.233750",
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233754",
+    "updated_at": "2025-07-27T14:14:44.233756"
+  },
+  {
+    "id": "922d0c7d-b929-46c0-8645-b80ec4bfdb96",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Nike Shorts",
+    "category": "bottoms",
+    "subcategory": "shorts",
+    "brand": "Calvin Klein",
+    "color": {
+      "primary": "Blue",
+      "secondary": null
+    },
+    "season": [
+      "fall",
+      "spring"
+    ],
+    "occasion": [
+      "casual",
+      "party"
+    ],
+    "size": "S",
+    "purchase_date": "2025-03-19T14:14:44.233764",
+    "cost": 187.83,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "shorts"
+    ],
+    "wear_count": 14,
+    "last_worn": "2025-07-21T14:14:44.233768",
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233771",
+    "updated_at": "2025-07-27T14:14:44.233772"
+  },
+  {
+    "id": "4af28d79-9d82-4ddc-8121-c276dab900b9",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Ralph Lauren Leggings",
+    "category": "bottoms",
+    "subcategory": "leggings",
+    "brand": "Adidas",
+    "color": {
+      "primary": "Gray",
+      "secondary": null
+    },
+    "season": [
+      "fall",
+      "winter"
+    ],
+    "occasion": [
+      "casual",
+      "party"
+    ],
+    "size": "XL",
+    "purchase_date": "2025-05-31T14:14:44.233828",
+    "cost": 110.69,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "leggings"
+    ],
+    "wear_count": 12,
+    "last_worn": null,
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233831",
+    "updated_at": "2025-07-27T14:14:44.233833"
+  },
+  {
+    "id": "2a72c988-19df-4962-a2cb-b6881bfd3001",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Adidas Casual Dress",
+    "category": "dresses",
+    "subcategory": "casual_dress",
+    "brand": "H&M",
+    "color": {
+      "primary": "Red",
+      "secondary": null
+    },
+    "season": [
+      "summer",
+      "spring"
+    ],
+    "occasion": [
+      "casual",
+      "work"
+    ],
+    "size": "XL",
+    "purchase_date": "2025-03-06T14:14:44.233847",
+    "cost": 164.96,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "casual dress"
+    ],
+    "wear_count": 5,
+    "last_worn": null,
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233856",
+    "updated_at": "2025-07-27T14:14:44.233862"
+  },
+  {
+    "id": "3d3eafca-3e12-467a-b6a6-1d90ac1b7ba9",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Gap Cocktail Dress",
+    "category": "dresses",
+    "subcategory": "cocktail_dress",
+    "brand": "H&M",
+    "color": {
+      "primary": "Navy",
+      "secondary": null
+    },
+    "season": [
+      "fall",
+      "spring"
+    ],
+    "occasion": [
+      "party",
+      "date"
+    ],
+    "size": "XL",
+    "purchase_date": "2025-04-22T14:14:44.233870",
+    "cost": 103.32,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1566479179817-0ddb5fa87cd9?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1566479179817-0ddb5fa87cd9?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1566479179817-0ddb5fa87cd9?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "cocktail dress"
+    ],
+    "wear_count": 3,
+    "last_worn": "2025-07-03T14:14:44.233877",
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233880",
+    "updated_at": "2025-07-27T14:14:44.233882"
+  },
+  {
+    "id": "ec71a9b3-96c3-456b-99b3-416e3777a64a",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Calvin Klein Maxi Dress",
+    "category": "dresses",
+    "subcategory": "maxi_dress",
+    "brand": "Gap",
+    "color": {
+      "primary": "White",
+      "secondary": null
+    },
+    "season": [
+      "fall",
+      "summer"
+    ],
+    "occasion": [
+      "casual",
+      "work"
+    ],
+    "size": "S",
+    "purchase_date": "2024-10-26T14:14:44.233888",
+    "cost": 115.73,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "maxi dress"
+    ],
+    "wear_count": 4,
+    "last_worn": "2025-05-31T14:14:44.233892",
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233895",
+    "updated_at": "2025-07-27T14:14:44.233897"
+  },
+  {
+    "id": "51797059-d5fe-4dc6-8521-6b31d7b63e64",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Adidas Blazer",
+    "category": "outerwear",
+    "subcategory": "blazer",
+    "brand": "H&M",
+    "color": {
+      "primary": "Gray",
+      "secondary": null
+    },
+    "season": [
+      "spring",
+      "fall"
+    ],
+    "occasion": [
+      "work",
+      "formal"
+    ],
+    "size": "M",
+    "purchase_date": "2024-08-26T14:14:44.233907",
+    "cost": 245.23,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "blazer"
+    ],
+    "wear_count": 20,
+    "last_worn": null,
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233916",
+    "updated_at": "2025-07-27T14:14:44.233923"
+  },
+  {
+    "id": "2a23965d-1a89-4a81-a2c1-dceb45d639ca",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Gap Jacket",
+    "category": "outerwear",
+    "subcategory": "jacket",
+    "brand": "Uniqlo",
+    "color": {
+      "primary": "Black",
+      "secondary": null
+    },
+    "season": [
+      "spring",
+      "fall"
+    ],
+    "occasion": [
+      "casual",
+      "work"
+    ],
+    "size": "XL",
+    "purchase_date": "2025-02-13T14:14:44.233930",
+    "cost": 322.82,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1559551409-dadc959f76b8?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1559551409-dadc959f76b8?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1559551409-dadc959f76b8?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "jacket"
+    ],
+    "wear_count": 17,
+    "last_worn": "2025-04-28T14:14:44.233938",
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233941",
+    "updated_at": "2025-07-27T14:14:44.233944"
+  },
+  {
+    "id": "964704db-50f2-4189-b77f-2aee2eb20683",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Zara Coat",
+    "category": "outerwear",
+    "subcategory": "coat",
+    "brand": "H&M",
+    "color": {
+      "primary": "Gray",
+      "secondary": null
+    },
+    "season": [
+      "fall",
+      "winter"
+    ],
+    "occasion": [
+      "casual",
+      "work"
+    ],
+    "size": "M",
+    "purchase_date": "2024-11-07T14:14:44.233950",
+    "cost": 391.48,
+    "images": {
+      "original": "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400&h=600&fit=crop",
+      "processed": "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400&h=600&fit=crop",
+      "thumbnail": "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=150&h=150&fit=crop"
+    },
+    "tags": [
+      "coat"
+    ],
+    "wear_count": 9,
+    "last_worn": null,
+    "is_active": true,
+    "is_favorite": false,
+    "notes": null,
+    "created_at": "2025-07-27T14:14:44.233954",
+    "updated_at": "2025-07-27T14:14:44.233957"
+  }
+]

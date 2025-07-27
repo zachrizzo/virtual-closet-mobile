@@ -1,0 +1,150 @@
+[
+  {
+    "id": "59dacb45-65a8-422d-924e-5f366f2e4154",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Outfit 1",
+    "item_ids": [
+      "fdec985a-8b2a-431b-9247-c8cd3bfa9379",
+      "922d0c7d-b929-46c0-8645-b80ec4bfdb96",
+      "51797059-d5fe-4dc6-8521-6b31d7b63e64"
+    ],
+    "occasion": "casual",
+    "season": "winter",
+    "weather": "sunny",
+    "rating": 3.7,
+    "notes": "Great combination for everyday wear",
+    "image": "/mock/images/outfit_0.png",
+    "wear_count": 1,
+    "last_worn": null,
+    "is_ai_generated": false,
+    "is_favorite": true,
+    "created_at": "2025-07-27T14:14:44.233976",
+    "updated_at": "2025-07-27T14:14:44.233982"
+  },
+  {
+    "id": "ad36c84c-3733-4609-ac8c-9ca7a1bdd8df",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Outfit 2",
+    "item_ids": [
+      "4d9e09a4-c9f9-4739-b75f-d261cb09d259",
+      "922d0c7d-b929-46c0-8645-b80ec4bfdb96"
+    ],
+    "occasion": "date",
+    "season": "winter",
+    "weather": "mild",
+    "rating": 3.7,
+    "notes": null,
+    "image": null,
+    "wear_count": 10,
+    "last_worn": "2025-07-26T14:14:44.233994",
+    "is_ai_generated": false,
+    "is_favorite": true,
+    "created_at": "2025-07-27T14:14:44.233997",
+    "updated_at": "2025-07-27T14:14:44.233998"
+  },
+  {
+    "id": "ba5631d0-fc99-4bce-8a55-b72cb495123a",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Outfit 3",
+    "item_ids": [
+      "fdec985a-8b2a-431b-9247-c8cd3bfa9379",
+      "7fff961d-8cd1-424d-9469-278ebbb7e013"
+    ],
+    "occasion": "casual",
+    "season": "fall",
+    "weather": "mild",
+    "rating": 4.0,
+    "notes": null,
+    "image": "/mock/images/outfit_2.png",
+    "wear_count": 1,
+    "last_worn": null,
+    "is_ai_generated": false,
+    "is_favorite": false,
+    "created_at": "2025-07-27T14:14:44.234004",
+    "updated_at": "2025-07-27T14:14:44.234006"
+  },
+  {
+    "id": "e7b15379-63ce-4062-8773-e96c6869b6d6",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Outfit 4",
+    "item_ids": [
+      "ed0e516d-9a00-4e8f-8d88-4650f96e697d",
+      "c1c881dc-ec9f-4288-8873-6a210f8d7808",
+      "2a23965d-1a89-4a81-a2c1-dceb45d639ca"
+    ],
+    "occasion": "casual",
+    "season": "fall",
+    "weather": "cloudy",
+    "rating": 4.8,
+    "notes": null,
+    "image": null,
+    "wear_count": 1,
+    "last_worn": "2025-07-10T14:14:44.234011",
+    "is_ai_generated": false,
+    "is_favorite": false,
+    "created_at": "2025-07-27T14:14:44.234013",
+    "updated_at": "2025-07-27T14:14:44.234014"
+  },
+  {
+    "id": "39df2e78-9acd-4116-89a2-47af841214ff",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Outfit 5",
+    "item_ids": [
+      "ed0e516d-9a00-4e8f-8d88-4650f96e697d",
+      "c1c881dc-ec9f-4288-8873-6a210f8d7808",
+      "51797059-d5fe-4dc6-8521-6b31d7b63e64"
+    ],
+    "occasion": "casual",
+    "season": "summer",
+    "weather": "sunny",
+    "rating": 3.8,
+    "notes": null,
+    "image": "/mock/images/outfit_4.png",
+    "wear_count": 2,
+    "last_worn": null,
+    "is_ai_generated": false,
+    "is_favorite": false,
+    "created_at": "2025-07-27T14:14:44.234020",
+    "updated_at": "2025-07-27T14:14:44.234021"
+  },
+  {
+    "id": "11618acd-3a26-4c25-a34b-d8d6531ed4cf",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Dress Outfit 1",
+    "item_ids": [
+      "2a72c988-19df-4962-a2cb-b6881bfd3001"
+    ],
+    "occasion": "date",
+    "season": "spring",
+    "weather": "sunny",
+    "rating": null,
+    "notes": null,
+    "image": null,
+    "wear_count": 4,
+    "last_worn": null,
+    "is_ai_generated": true,
+    "is_favorite": false,
+    "created_at": "2025-07-27T14:14:44.234031",
+    "updated_at": "2025-07-27T14:14:44.234036"
+  },
+  {
+    "id": "6a141003-acfa-4f0e-8419-45ba778e995c",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "name": "Dress Outfit 2",
+    "item_ids": [
+      "3d3eafca-3e12-467a-b6a6-1d90ac1b7ba9"
+    ],
+    "occasion": "date",
+    "season": "spring",
+    "weather": "sunny",
+    "rating": null,
+    "notes": null,
+    "image": null,
+    "wear_count": 1,
+    "last_worn": null,
+    "is_ai_generated": true,
+    "is_favorite": false,
+    "created_at": "2025-07-27T14:14:44.234044",
+    "updated_at": "2025-07-27T14:14:44.234046"
+  }
+]
