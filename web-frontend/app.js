@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://192.168.1.117:8000';
 let authToken = null;
 let currentUser = null;
 let selectedUserPhoto = null;

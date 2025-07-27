@@ -8,8 +8,8 @@ import { mockClothingItems } from '../utils/mockData';
 const getBaseURL = () => {
   if (__DEV__) {
     return Platform.OS === 'ios' 
-      ? 'http://192.168.1.136:8000/api/v1'
-      : 'http://10.0.2.2:8000/api/v1';
+      ? 'http://192.168.1.117:8000/api/v1'
+      : 'http://192.168.1.117:8000/api/v1';
   }
   return process.env.API_URL || 'https://api.virtualcloset.com/api/v1';
 };
