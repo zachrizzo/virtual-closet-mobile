@@ -3,16 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { getMockClothing, getMockOutfits, getMockRecommendations, getMockClothingItem } from './mockData';
 import { mockClothingItems } from '../utils/mockData';
-
-// Use different base URLs for iOS simulator and Android emulator
-const getBaseURL = () => {
-  if (__DEV__) {
-    return Platform.OS === 'ios' 
-      ? 'http://192.168.1.117:8000/api/v1'
-      : 'http://192.168.1.117:8000/api/v1';
-  }
-  return process.env.API_URL || 'https://api.virtualcloset.com/api/v1';
-};
+import { getBaseURL } from '../config/api';
 
 const api = axios.create({
   baseURL: getBaseURL(),

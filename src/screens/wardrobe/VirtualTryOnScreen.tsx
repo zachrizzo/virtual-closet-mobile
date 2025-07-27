@@ -71,7 +71,7 @@ const VirtualTryOnScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaType.Images,
       allowsEditing: true,
       aspect: [3, 4],
       quality: 0.9,

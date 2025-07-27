@@ -1,5 +1,5 @@
-// API Configuration
-const API_BASE_URL = 'http://192.168.1.117:8000';
+// API Configuration is now loaded from config.js
+// const API_BASE_URL is defined in config.js
 let authToken = null;
 let currentUser = null;
 let selectedUserPhoto = null;

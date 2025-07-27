@@ -2,15 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { RootState } from '../index';
-
-const getBaseURL = () => {
-  if (__DEV__) {
-    return Platform.OS === 'ios' 
-      ? 'http://192.168.1.136:8000/api/v1'
-      : 'http://10.0.2.2:8000/api/v1';
-  }
-  return process.env.API_URL || 'https://api.virtualcloset.com/api/v1';
-};
+import { getBaseURL } from '../../config/api';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: getBaseURL(),

@@ -3,6 +3,7 @@ import { ClothingItem, ClothingCategory } from '@/types/clothing';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance from '../../services/api';
 import { Platform } from 'react-native';
+import { getBaseURL } from '../../config/api';
 
 interface GetClothingParams {
   category?: ClothingCategory | null;
@@ -143,10 +144,7 @@ export const clothingApi = api.injectEndpoints({
           }
           
           // Make direct fetch request to bypass axios interceptors for debugging
-          // Using Mac's IP address for iOS device testing
-          const baseUrl = Platform.OS === 'ios' 
-            ? 'http://192.168.1.136:8000/api/v1' 
-            : 'http://10.0.2.2:8000/api/v1';
+          const baseUrl = getBaseURL();
           
           console.log('clothingApi - Making request to:', baseUrl + '/ai/virtual-tryon');
           
