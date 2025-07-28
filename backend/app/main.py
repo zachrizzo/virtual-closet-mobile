@@ -26,8 +26,8 @@ app.add_middleware(
 uploads_dir = "app/data/uploads"
 os.makedirs(uploads_dir, exist_ok=True)
 
-# Mount static files for uploaded images
-app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
+# Mount static files for uploaded images at the API path
+app.mount("/api/v1/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 
 # Include routers
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])

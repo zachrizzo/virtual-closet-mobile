@@ -8,9 +8,9 @@ class ColorInfo(BaseModel):
     secondary: Optional[List[str]] = None
 
 class ImageInfo(BaseModel):
-    original: str
-    processed: Optional[str] = None
-    thumbnail: Optional[str] = None
+    original: Optional[str] = None  # base64 encoded image data
+    processed: Optional[str] = None  # base64 encoded processed image data
+    thumbnail: Optional[str] = None  # base64 encoded thumbnail data
 
 class ClothingItem(BaseModel):
     id: str

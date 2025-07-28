@@ -126,21 +126,30 @@ async def virtual_tryon(
             import shutil
             shutil.copy(user_image, person_path)
         
-        # Get garment image path
-        garment_path = clothing_item.images.processed or clothing_item.images.original
-        if not garment_path:
+        # Get garment image (base64 data URI)
+        garment_data = clothing_item.images.processed or clothing_item.images.original
+        if not garment_data:
             raise HTTPException(status_code=400, detail="Clothing item has no image")
         
-        # Download garment image if it's a URL
+        # Handle garment image (base64 data URI)
         garment_local_path = upload_dir / f"garment_{session_id}.jpg"
-        if garment_path.startswith('http'):
+        if garment_data.startswith('data:'):
+            # Handle base64 data URI
+            import base64
+            header, data = garment_data.split(',', 1)
+            with open(garment_local_path, 'wb') as f:
+                f.write(base64.b64decode(data))
+            garment_path_str = str(garment_local_path)
+        elif garment_data.startswith('http'):
+            # Handle legacy URL (for backward compatibility)
             import requests
-            response = requests.get(garment_path)
+            response = requests.get(garment_data)
             with open(garment_local_path, 'wb') as f:
                 f.write(response.content)
             garment_path_str = str(garment_local_path)
         else:
-            garment_path_str = str(garment_path)
+            # Handle legacy file path (for backward compatibility)
+            garment_path_str = str(garment_data)
         
         # Process virtual try-on with real AI
         result = await ai_service.generate_virtual_tryon_from_files(

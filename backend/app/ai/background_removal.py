@@ -39,10 +39,36 @@ class U2NetBackgroundRemover:
             return
             
         try:
-            # For now, we'll skip loading the actual U2NET model
-            # In production, this would load the full U2NET architecture
-            print(f"U-2-Net model loading skipped (model file implementation pending)")
-            self.model = None
+            from .models.u2net import U2NET, U2NETP
+            
+            # Check if model file exists
+            if not Path(self.model_path).exists():
+                print(f"U-2-Net model file not found at {self.model_path}")
+                self.model = None
+                return
+            
+            # Determine which model to use based on filename
+            if "u2netp" in self.model_path.lower():
+                print("Loading U2NETP (lightweight) model...")
+                self.model = U2NETP(3, 1)
+            else:
+                print("Loading U2NET (full) model...")
+                self.model = U2NET(3, 1)
+            
+            # Load state dict with proper device mapping
+            if self.device == "cpu":
+                state_dict = torch.load(self.model_path, map_location='cpu')
+            elif self.device == "mps":
+                # For MPS (Apple Silicon), first load to CPU then move to MPS
+                state_dict = torch.load(self.model_path, map_location='cpu')
+            else:
+                state_dict = torch.load(self.model_path, map_location=self.device)
+            
+            self.model.load_state_dict(state_dict)
+            self.model.to(self.device)
+            self.model.eval()
+            
+            print(f"✅ U-2-Net model loaded successfully on {self.device}")
                 
         except Exception as e:
             print(f"Failed to load U-2-Net model: {e}")
@@ -124,3 +150,52 @@ class U2NetBackgroundRemover:
         mask = Image.fromarray(mask_np, mode='L')
         
         return mask
+
+
+class BackgroundRemoval:
+    """Convenience class for background removal with U-2-Net."""
+    
+    def __init__(self, model_name: str = "u2net", device: str = None):
+        """
+        Initialize background removal with specified model.
+        
+        Args:
+            model_name: Model to use ('u2net', 'u2netp', 'u2net_human')
+            device: Device to run on (None for auto-detect)
+        """
+        if device is None:
+            if torch.backends.mps.is_available():
+                device = "mps"
+            elif torch.cuda.is_available():
+                device = "cuda"
+            else:
+                device = "cpu"
+        
+        self.device = device
+        
+        # Get model path based on model name
+        model_map = {
+            "u2net": "model",
+            "u2netp": "model_portrait",
+            "u2net_human": "model_human"
+        }
+        
+        if model_name not in model_map:
+            raise ValueError(f"Unknown model: {model_name}. Choose from: {list(model_map.keys())}")
+        
+        try:
+            model_path = str(get_model_path("u2net", model_map[model_name]))
+            self.processor = U2NetBackgroundRemover(model_path=model_path, device=device)
+            self.processor.load_model()
+        except Exception as e:
+            print(f"Failed to initialize background removal: {e}")
+            self.processor = None
+    
+    def remove_background(self, image: Image.Image) -> Tuple[Image.Image, Image.Image]:
+        """Remove background from image."""
+        if self.processor is None:
+            # Return original if processor not available
+            mask = Image.new('L', image.size, 255)
+            return image, mask
+        
+        return self.processor.remove_background(image)

@@ -37,13 +37,22 @@ from diffusers.models.embeddings import (
     ImageHintTimeEmbedding,
     ImageProjection,
     ImageTimeEmbedding,
-    PositionNet,
     TextImageProjection,
     TextImageTimeEmbedding,
     TextTimeEmbedding,
     TimestepEmbedding,
     Timesteps,
 )
+
+# Handle PositionNet compatibility
+try:
+    from diffusers.models.embeddings import PositionNet
+except ImportError:
+    # PositionNet not available in newer diffusers, create a dummy class
+    class PositionNet(nn.Module):
+        def __init__(self, *args, **kwargs):
+            super().__init__()
+            pass
 from diffusers.models.modeling_utils import ModelMixin
 from .unet_block_hacked_garmnet import (
     UNetMidBlock2D,
@@ -53,7 +62,7 @@ from .unet_block_hacked_garmnet import (
     get_up_block,
 )
 from diffusers.models.resnet import Downsample2D, FirDownsample2D, FirUpsample2D, KDownsample2D, KUpsample2D, ResnetBlock2D, Upsample2D
-from diffusers.models.transformer_2d import Transformer2DModel
+from diffusers.models import Transformer2DModel
 
 
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
@@ -727,7 +736,7 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin, UNet2DConditionLoadersMixin)
         return processors
 
     def set_attn_processor(
-        self, processor: Union[AttentionProcessor, Dict[str, AttentionProcessor]], _remove_lora=False
+        self, processor: Union[AttentionProcessor, Dict[str, AttentionProcessor]]
     ):
         r"""
         Sets the attention processor to use to compute attention.
@@ -752,9 +761,11 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin, UNet2DConditionLoadersMixin)
         def fn_recursive_attn_processor(name: str, module: torch.nn.Module, processor):
             if hasattr(module, "set_processor"):
                 if not isinstance(processor, dict):
-                    module.set_processor(processor, _remove_lora=_remove_lora)
+                    # Remove _remove_lora parameter for compatibility with newer diffusers
+                    module.set_processor(processor)
                 else:
-                    module.set_processor(processor.pop(f"{name}.processor"), _remove_lora=_remove_lora)
+                    # Remove _remove_lora parameter for compatibility with newer diffusers
+                    module.set_processor(processor.pop(f"{name}.processor"))
 
             for sub_name, child in module.named_children():
                 fn_recursive_attn_processor(f"{name}.{sub_name}", child, processor)
@@ -775,7 +786,7 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin, UNet2DConditionLoadersMixin)
                 f"Cannot call `set_default_attn_processor` when attention processors are of type {next(iter(self.attn_processors.values()))}"
             )
 
-        self.set_attn_processor(processor, _remove_lora=True)
+        self.set_attn_processor(processor)
 
     def set_attention_slice(self, slice_size):
         r"""

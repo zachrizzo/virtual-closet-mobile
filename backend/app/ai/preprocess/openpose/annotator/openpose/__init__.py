@@ -15,7 +15,12 @@ from . import util
 from .body import Body
 from .hand import Hand
 from .face import Face
-from annotator.util import annotator_ckpts_path
+from pathlib import Path
+
+# Try external drive first, then local path
+external_ckpts = Path('/Volumes/4TB-Z/AI-Models/virtual-closet/idm-vton/model_weights/openpose/ckpts')
+local_ckpts = Path(__file__).parent.parent.parent.parent / 'ckpt/openpose'
+annotator_ckpts_path = str(external_ckpts) if external_ckpts.exists() else str(local_ckpts)
 
 body_model_path = "https://huggingface.co/lllyasviel/Annotators/resolve/main/body_pose_model.pth"
 hand_model_path = "https://huggingface.co/lllyasviel/Annotators/resolve/main/hand_pose_model.pth"
@@ -49,8 +54,7 @@ class OpenposeDetector:
         # face_modelpath = os.path.join(annotator_ckpts_path, "facenet.pth")
 
         if not os.path.exists(body_modelpath):
-            from basicsr.utils.download_util import load_file_from_url
-            load_file_from_url(body_model_path, model_dir=annotator_ckpts_path)
+            raise FileNotFoundError(f"Body pose model not found at {body_modelpath}. Please download from {body_model_path}")
 
         # if not os.path.exists(hand_modelpath):
         #     from basicsr.utils.download_util import load_file_from_url

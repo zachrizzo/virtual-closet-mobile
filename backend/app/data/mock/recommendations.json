@@ -1,1 +1,830 @@
-[]
+[
+  {
+    "id": "6bee025f-152f-4d73-920c-abcc8bb4e98a",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "c840e9c6-15bf-408f-a48b-b5315ac07824",
+      "c1c881dc-ec9f-4288-8873-6a210f8d7808"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7271759342066451,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Consider adding accessories to complete the look",
+      "Try different shoe styles to change the vibe of this outfit"
+    ],
+    "created_at": "2025-07-27T21:39:30.467483"
+  },
+  {
+    "id": "f2d0cfe7-6d3c-4a1a-bed6-f55cf5a30f19",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "02948342-ebfb-45f0-8165-19fff393adc0",
+      "c1c881dc-ec9f-4288-8873-6a210f8d7808"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.9213151546710129,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "This combination works well with both casual and smart-casual settings",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-27T21:39:30.467876"
+  },
+  {
+    "id": "8a8a8c6d-897d-4bd8-b0b8-631d0e251e44",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "c840e9c6-15bf-408f-a48b-b5315ac07824",
+      "90ad9234-19d7-48e5-9729-21c05606ea47"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.8524435525897509,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-27T21:39:30.468026"
+  },
+  {
+    "id": "ddc04b33-448c-4e85-a7b6-4698977b9913",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "fdec985a-8b2a-431b-9247-c8cd3bfa9379",
+      "4af28d79-9d82-4ddc-8121-c276dab900b9"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.8710768759727463,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-27T21:41:22.396305"
+  },
+  {
+    "id": "e78fedaf-122f-4894-9894-c6a3c954ceab",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "4d9e09a4-c9f9-4739-b75f-d261cb09d259",
+      "c1c881dc-ec9f-4288-8873-6a210f8d7808"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.8258149379787898,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "This combination works well with both casual and smart-casual settings"
+    ],
+    "created_at": "2025-07-27T21:41:22.396696"
+  },
+  {
+    "id": "d5921bc6-e6d3-4314-95c2-5b461cd6f4ee",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "02948342-ebfb-45f0-8165-19fff393adc0",
+      "922d0c7d-b929-46c0-8645-b80ec4bfdb96"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7046110016304092,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "This combination works well with both casual and smart-casual settings",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-27T21:41:22.397341"
+  },
+  {
+    "id": "ec9cab24-b112-49ab-8a6f-3ecec39f0dd8",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "ed0e516d-9a00-4e8f-8d88-4650f96e697d",
+      "c1c881dc-ec9f-4288-8873-6a210f8d7808"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7862586881913799,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "This combination works well with both casual and smart-casual settings",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-27T21:58:21.833138"
+  },
+  {
+    "id": "68d1b7b4-8a07-4241-a6c4-8c6c7878802d",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "ed0e516d-9a00-4e8f-8d88-4650f96e697d",
+      "7fff961d-8cd1-424d-9469-278ebbb7e013"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.9432634107454838,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-27T21:58:21.833424"
+  },
+  {
+    "id": "a49078f7-8750-4aa6-9342-38a3c5ac2bc1",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "4d9e09a4-c9f9-4739-b75f-d261cb09d259",
+      "c1c881dc-ec9f-4288-8873-6a210f8d7808"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7132242148799383,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-27T21:58:21.833834"
+  },
+  {
+    "id": "cae0d5d9-f28b-423b-abc0-b30ea27a617c",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "c840e9c6-15bf-408f-a48b-b5315ac07824",
+      "4af28d79-9d82-4ddc-8121-c276dab900b9"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.801102923504054,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-27T22:41:10.377929"
+  },
+  {
+    "id": "2a228a24-a189-4acf-a90a-74020b0d9333",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "fdec985a-8b2a-431b-9247-c8cd3bfa9379",
+      "90ad9234-19d7-48e5-9729-21c05606ea47"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7444617690841742,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Consider adding accessories to complete the look",
+      "Try different shoe styles to change the vibe of this outfit"
+    ],
+    "created_at": "2025-07-27T22:41:10.378262"
+  },
+  {
+    "id": "1035a1c4-1355-402b-be4e-028053b81862",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "02948342-ebfb-45f0-8165-19fff393adc0",
+      "4af28d79-9d82-4ddc-8121-c276dab900b9"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.760719621419598,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Consider adding accessories to complete the look",
+      "This combination works well with both casual and smart-casual settings"
+    ],
+    "created_at": "2025-07-27T22:41:10.378704"
+  },
+  {
+    "id": "e95769a9-9b5b-4029-8f1b-14d18fe2af06",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "ed0e516d-9a00-4e8f-8d88-4650f96e697d",
+      "c1c881dc-ec9f-4288-8873-6a210f8d7808"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.8636853941166913,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "This combination works well with both casual and smart-casual settings"
+    ],
+    "created_at": "2025-07-27T23:48:04.044532"
+  },
+  {
+    "id": "c109f2c9-61eb-4710-9582-f8db7272c203",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "02948342-ebfb-45f0-8165-19fff393adc0",
+      "7fff961d-8cd1-424d-9469-278ebbb7e013"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.701631037511321,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "This combination works well with both casual and smart-casual settings",
+      "Try different shoe styles to change the vibe of this outfit"
+    ],
+    "created_at": "2025-07-27T23:48:04.044925"
+  },
+  {
+    "id": "85fed369-b357-4ce7-8511-51195ad3bd9c",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "ed0e516d-9a00-4e8f-8d88-4650f96e697d",
+      "922d0c7d-b929-46c0-8645-b80ec4bfdb96"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.943905740147236,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Consider adding accessories to complete the look",
+      "This combination works well with both casual and smart-casual settings"
+    ],
+    "created_at": "2025-07-27T23:48:04.045210"
+  },
+  {
+    "id": "29452277-36c4-4708-bdff-fca36dc4178c",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "c840e9c6-15bf-408f-a48b-b5315ac07824",
+      "922d0c7d-b929-46c0-8645-b80ec4bfdb96"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.718092458688697,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "This combination works well with both casual and smart-casual settings",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-27T23:48:27.725244"
+  },
+  {
+    "id": "69f03b36-07c2-4724-9c4d-abef6c46a78e",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "fdec985a-8b2a-431b-9247-c8cd3bfa9379",
+      "7fff961d-8cd1-424d-9469-278ebbb7e013"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7578879677239577,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "This combination works well with both casual and smart-casual settings",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-27T23:48:27.725591"
+  },
+  {
+    "id": "8e709dcb-fd75-4dd6-834e-904d5c82a9f7",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "02948342-ebfb-45f0-8165-19fff393adc0",
+      "4af28d79-9d82-4ddc-8121-c276dab900b9"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7330691987288838,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "This combination works well with both casual and smart-casual settings"
+    ],
+    "created_at": "2025-07-27T23:48:27.725880"
+  },
+  {
+    "id": "2be1ecdc-76c9-47f5-b623-6785daddc0fe",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "4d9e09a4-c9f9-4739-b75f-d261cb09d259",
+      "90ad9234-19d7-48e5-9729-21c05606ea47"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7468244477255701,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Consider adding accessories to complete the look",
+      "This combination works well with both casual and smart-casual settings"
+    ],
+    "created_at": "2025-07-27T23:52:31.873512"
+  },
+  {
+    "id": "2e3f55e9-1b12-47bb-b897-842e8ca08e94",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "c840e9c6-15bf-408f-a48b-b5315ac07824",
+      "7fff961d-8cd1-424d-9469-278ebbb7e013"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.8830046998499631,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-27T23:52:31.873945"
+  },
+  {
+    "id": "c2e14414-6033-40f2-b835-d2c6c9266c5a",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "ed0e516d-9a00-4e8f-8d88-4650f96e697d",
+      "90ad9234-19d7-48e5-9729-21c05606ea47"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.715483900312449,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "This combination works well with both casual and smart-casual settings"
+    ],
+    "created_at": "2025-07-27T23:52:31.874464"
+  },
+  {
+    "id": "d30b9ee9-e2d2-4166-a2bd-e35332ed103f",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "02948342-ebfb-45f0-8165-19fff393adc0",
+      "c1c881dc-ec9f-4288-8873-6a210f8d7808"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7840375958149652,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "This combination works well with both casual and smart-casual settings",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-28T00:25:00.962086"
+  },
+  {
+    "id": "7d134195-f262-426f-a873-5259b841600c",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "c840e9c6-15bf-408f-a48b-b5315ac07824",
+      "4af28d79-9d82-4ddc-8121-c276dab900b9"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7756827707648978,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-28T00:25:00.962548"
+  },
+  {
+    "id": "98a77952-ddfe-43f2-a289-bcc2872e5a95",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "02948342-ebfb-45f0-8165-19fff393adc0",
+      "7fff961d-8cd1-424d-9469-278ebbb7e013"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7556566008360942,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "This combination works well with both casual and smart-casual settings",
+      "Try different shoe styles to change the vibe of this outfit"
+    ],
+    "created_at": "2025-07-28T00:25:00.963123"
+  },
+  {
+    "id": "cc33ff22-62a9-48b7-995d-e0084c792199",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "ed0e516d-9a00-4e8f-8d88-4650f96e697d",
+      "4af28d79-9d82-4ddc-8121-c276dab900b9"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7480801730558582,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-28T00:33:35.627391"
+  },
+  {
+    "id": "11b4d011-8382-4171-ba99-abeb95dc01c9",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "4d9e09a4-c9f9-4739-b75f-d261cb09d259",
+      "90ad9234-19d7-48e5-9729-21c05606ea47"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7235853865650197,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-28T00:33:35.627846"
+  },
+  {
+    "id": "0559122e-daf2-4f6c-ae37-cabec6352666",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "c840e9c6-15bf-408f-a48b-b5315ac07824",
+      "90ad9234-19d7-48e5-9729-21c05606ea47"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7585758737673387,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "This combination works well with both casual and smart-casual settings",
+      "Try different shoe styles to change the vibe of this outfit"
+    ],
+    "created_at": "2025-07-28T00:33:35.628481"
+  },
+  {
+    "id": "8bd94e88-fe37-4c70-a34b-2b096e4d29e1",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "c840e9c6-15bf-408f-a48b-b5315ac07824",
+      "4af28d79-9d82-4ddc-8121-c276dab900b9"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7698890938127482,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "This combination works well with both casual and smart-casual settings",
+      "Try different shoe styles to change the vibe of this outfit"
+    ],
+    "created_at": "2025-07-28T00:41:19.588549"
+  },
+  {
+    "id": "9a19c095-5d87-48f0-9ce3-a7cf49cd26d1",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "ed0e516d-9a00-4e8f-8d88-4650f96e697d",
+      "7fff961d-8cd1-424d-9469-278ebbb7e013"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.8168945684567048,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "This combination works well with both casual and smart-casual settings"
+    ],
+    "created_at": "2025-07-28T00:41:19.589173"
+  },
+  {
+    "id": "6af8bc13-422d-4245-a944-004547a67e41",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "4d9e09a4-c9f9-4739-b75f-d261cb09d259",
+      "7fff961d-8cd1-424d-9469-278ebbb7e013"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.819892739563292,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "This combination works well with both casual and smart-casual settings",
+      "Try different shoe styles to change the vibe of this outfit"
+    ],
+    "created_at": "2025-07-28T00:41:19.590090"
+  },
+  {
+    "id": "99b43dd4-a4f6-47ec-822f-fe932aad0333",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "ed0e516d-9a00-4e8f-8d88-4650f96e697d",
+      "c1c881dc-ec9f-4288-8873-6a210f8d7808"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.8319687792669945,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-28T01:15:43.923888"
+  },
+  {
+    "id": "f09f3a67-0429-49a6-a26d-6de043f509bc",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "4d9e09a4-c9f9-4739-b75f-d261cb09d259",
+      "7fff961d-8cd1-424d-9469-278ebbb7e013"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.830562609486651,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Consider adding accessories to complete the look",
+      "Try different shoe styles to change the vibe of this outfit"
+    ],
+    "created_at": "2025-07-28T01:15:43.924441"
+  },
+  {
+    "id": "10f0d2fa-f172-4a66-ac40-d8bc334662ab",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "c840e9c6-15bf-408f-a48b-b5315ac07824",
+      "c1c881dc-ec9f-4288-8873-6a210f8d7808"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.8515304994514987,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-28T01:15:43.925238"
+  },
+  {
+    "id": "9e8a4c60-3d3e-4e59-b361-50c8e6674587",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "02948342-ebfb-45f0-8165-19fff393adc0",
+      "c1c881dc-ec9f-4288-8873-6a210f8d7808"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7427089646547815,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "This combination works well with both casual and smart-casual settings",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-28T01:19:31.827088"
+  },
+  {
+    "id": "2ee94353-7941-42ab-b4ba-f1c451468c3d",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "c840e9c6-15bf-408f-a48b-b5315ac07824",
+      "90ad9234-19d7-48e5-9729-21c05606ea47"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.7784757392640546,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Consider adding accessories to complete the look",
+      "Try different shoe styles to change the vibe of this outfit"
+    ],
+    "created_at": "2025-07-28T01:19:31.827775"
+  },
+  {
+    "id": "4f0b03d0-87df-4c25-9ed2-fa85011c6f87",
+    "user_id": "d62ccd8d-952f-4668-ac49-c0340bff34ba",
+    "item_ids": [
+      "c840e9c6-15bf-408f-a48b-b5315ac07824",
+      "90ad9234-19d7-48e5-9729-21c05606ea47"
+    ],
+    "context": {
+      "occasion": null,
+      "season": null,
+      "weather": null,
+      "temperature": null,
+      "event_type": null,
+      "time_of_day": null
+    },
+    "score": 0.9262847233178966,
+    "reason": "A stylish and versatile outfit combination",
+    "styling_tips": [
+      "Try different shoe styles to change the vibe of this outfit",
+      "Consider adding accessories to complete the look"
+    ],
+    "created_at": "2025-07-28T01:19:31.828622"
+  }
+]

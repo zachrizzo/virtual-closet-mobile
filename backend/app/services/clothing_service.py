@@ -1,7 +1,7 @@
 import os
 import json
 import uuid
-import shutil
+import base64
 from datetime import datetime
 from typing import List, Optional
 from pathlib import Path
@@ -10,6 +10,8 @@ from app.models.clothing import ClothingItem, ImageInfo
 from app.schemas.clothing_schemas import ClothingItemCreate, ClothingItemUpdate, ClothingItemFilter
 from app.config import settings
 from app.services.image_service import ImageService
+from PIL import Image
+import io
 
 class ClothingService:
     def __init__(self):
@@ -136,16 +138,21 @@ class ClothingService:
         if len(contents) > settings.MAX_UPLOAD_SIZE:
             raise HTTPException(status_code=400, detail="File too large")
         
-        # Create user directory
-        user_dir = self.upload_dir / user_id / item_id
-        user_dir.mkdir(parents=True, exist_ok=True)
+        # Convert to base64
+        original_base64 = base64.b64encode(contents).decode('utf-8')
         
-        # Save original file
-        original_filename = f"original{file_ext}"
-        original_path = user_dir / original_filename
+        # Create data URI with proper MIME type
+        mime_type = {
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg', 
+            '.png': 'image/png',
+            '.webp': 'image/webp'
+        }.get(file_ext, 'image/jpeg')
         
-        with open(original_path, "wb") as f:
-            f.write(contents)
+        original_data_uri = f"data:{mime_type};base64,{original_base64}"
+        
+        # Generate thumbnail
+        thumbnail_data_uri = self._generate_thumbnail(contents, mime_type)
         
         # Update clothing item
         clothing = self._load_clothing()
@@ -157,11 +164,39 @@ class ClothingService:
                 detail="Clothing item not found"
             )
         
-        clothing[item_index]['images']['original'] = str(original_path)
+        clothing[item_index]['images']['original'] = original_data_uri
+        clothing[item_index]['images']['thumbnail'] = thumbnail_data_uri
         clothing[item_index]['updated_at'] = datetime.utcnow().isoformat()
         self._save_clothing(clothing)
         
-        return {"message": "Image uploaded successfully", "path": str(original_path)}
+        return {"message": "Image uploaded successfully", "data_uri": original_data_uri}
+    
+    def _generate_thumbnail(self, image_bytes: bytes, mime_type: str, size: tuple = (150, 150)) -> str:
+        """Generate a thumbnail from image bytes and return as base64 data URI"""
+        try:
+            # Open image from bytes
+            image = Image.open(io.BytesIO(image_bytes))
+            
+            # Convert to RGB if necessary (for JPEG)
+            if image.mode in ('RGBA', 'P'):
+                image = image.convert('RGB')
+            
+            # Generate thumbnail
+            image.thumbnail(size, Image.Resampling.LANCZOS)
+            
+            # Save to bytes
+            output = io.BytesIO()
+            format_name = 'JPEG' if mime_type == 'image/jpeg' else mime_type.split('/')[-1].upper()
+            image.save(output, format=format_name, quality=85)
+            
+            # Convert to base64
+            thumbnail_bytes = output.getvalue()
+            thumbnail_base64 = base64.b64encode(thumbnail_bytes).decode('utf-8')
+            
+            return f"data:{mime_type};base64,{thumbnail_base64}"
+        except Exception:
+            # If thumbnail generation fails, return None
+            return None
     
     async def process_image(self, user_id: str, item_id: str) -> dict:
         item = self.get_clothing_item(user_id, item_id)
@@ -172,19 +207,37 @@ class ClothingService:
                 detail="No image to process"
             )
         
-        # Process image (background removal, thumbnail generation)
-        result = await self.image_service.process_clothing_image(item.images.original)
+        # Convert base64 data URI to bytes for processing
+        if item.images.original.startswith('data:'):
+            # Extract base64 data from data URI
+            header, base64_data = item.images.original.split(',', 1)
+            image_bytes = base64.b64decode(base64_data)
+            mime_type = header.split(';')[0].split(':')[1]
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid image format"
+            )
         
-        # Update clothing item with processed images
+        # Process image (background removal)
+        processed_image_bytes = await self.image_service.process_clothing_image_bytes(image_bytes)
+        
+        # Convert processed image to base64 data URI
+        processed_base64 = base64.b64encode(processed_image_bytes).decode('utf-8')
+        processed_data_uri = f"data:{mime_type};base64,{processed_base64}"
+        
+        # Update clothing item with processed image
         clothing = self._load_clothing()
         item_index = next((i for i, c in enumerate(clothing) if c['id'] == item_id), None)
         
-        clothing[item_index]['images']['processed'] = result['processed_path']
-        clothing[item_index]['images']['thumbnail'] = result['thumbnail_path']
+        clothing[item_index]['images']['processed'] = processed_data_uri
         clothing[item_index]['updated_at'] = datetime.utcnow().isoformat()
         self._save_clothing(clothing)
         
-        return result
+        return {
+            "processed_data_uri": processed_data_uri,
+            "message": "Image processed successfully"
+        }
     
     def mark_as_worn(self, user_id: str, item_id: str) -> ClothingItem:
         clothing = self._load_clothing()

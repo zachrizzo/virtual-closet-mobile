@@ -225,34 +225,19 @@ class AIService:
         # Load IDM-VTON implementations lazily
         self._load_idm_vton_implementations()
         
-        # Check which processor is available
-        # Priority: Simplified IDM-VTON > Official IDM-VTON > Gradio IDM-VTON > Original IDM-VTON
-        try:
-            # Try simplified IDM-VTON first (no DensePose dependency)
-            if self.simplified_idm_vton and self.simplified_idm_vton != False and self.simplified_idm_vton.load_models():
-                processor = self.simplified_idm_vton
-                print("🎯 Using Simplified IDM-VTON implementation (real AI model - no DensePose)")
-            elif self.official_idm_vton and self.official_idm_vton != False and self.official_idm_vton.load_models():
-                processor = self.official_idm_vton
-                print("🎯 Using Official IDM-VTON implementation (real AI model - Gradio-style)")
-            elif self.gradio_idm_vton.is_available():
-                processor = self.gradio_idm_vton
-                print("✅ Using IDM-VTON Gradio client (real AI model)")
-            elif self.vton_processor.is_available():
-                processor = self.vton_processor
-                print("Using original IDM-VTON processor")
-            else:
-                raise Exception("No virtual try-on processor available")
-        except Exception as e:
-            print(f"⚠️  Failed to load IDM-VTON implementations: {e}")
-            if self.gradio_idm_vton.is_available():
-                processor = self.gradio_idm_vton
-                print("✅ Using IDM-VTON Gradio client (real AI model)")
-            elif self.vton_processor.is_available():
-                processor = self.vton_processor
-                print("Using original IDM-VTON processor")
-            else:
-                raise Exception("No virtual try-on processor available")
+        # Load IDM-VTON - NO FALLBACKS
+        if self.simplified_idm_vton and self.simplified_idm_vton != False:
+            try:
+                if self.simplified_idm_vton.load_models():
+                    processor = self.simplified_idm_vton
+                    print("✅ Using IDM-VTON implementation (actual AI model)")
+                else:
+                    raise Exception("IDM-VTON models failed to load")
+            except Exception as e:
+                print(f"❌ IDM-VTON failed: {e}")
+                raise Exception(f"Virtual try-on failed: IDM-VTON model could not be loaded - {e}")
+        else:
+            raise Exception("Virtual try-on failed: IDM-VTON model not initialized")
         
         try:
             # Get clothing item details
@@ -362,89 +347,65 @@ class AIService:
             # Load IDM-VTON implementations lazily
             self._load_idm_vton_implementations()
             
-            # Try to use the IDM-VTON implementations first
-            try:
-                # Try simplified IDM-VTON first
-                if self.simplified_idm_vton and self.simplified_idm_vton != False and self.simplified_idm_vton.load_models():
-                    print("🎯 Using Simplified IDM-VTON implementation")
-                    from PIL import Image
-                    
-                    person_image = Image.open(person_image_path)
-                    garment_image = Image.open(garment_image_path)
-                    
-                    result_image, mask_image = self.simplified_idm_vton.generate_virtual_tryon(
-                        person_image=person_image,
-                        garment_image=garment_image,
-                        garment_description="a stylish garment",
-                        auto_mask=True,
-                        denoise_steps=30,
-                        seed=42
-                    )
-                    
-                    # Save the result
-                    result_image.save(output_path)
-                    
-                    result = {
-                        "success": True,
-                        "output_path": output_path,
-                        "metadata": {
-                            "processing_time": time.time() - start_time,
-                            "model_used": "IDM-VTON Simplified",
-                            "inference_steps": 30
-                        }
-                    }
-                elif self.official_idm_vton and self.official_idm_vton != False and self.official_idm_vton.load_models():
-                    print("🎯 Using Official IDM-VTON implementation")
-                    from PIL import Image
-                    
-                    person_image = Image.open(person_image_path)
-                    garment_image = Image.open(garment_image_path)
-                    
-                    result_image, mask_image = self.official_idm_vton.generate_virtual_tryon(
-                        person_image=person_image,
-                        garment_image=garment_image,
-                        garment_description="a stylish garment",
-                        auto_mask=True,
-                        denoise_steps=30,
-                        seed=42
-                    )
-                    
-                    # Save the result
-                    result_image.save(output_path)
-                    
-                    result = {
-                        "success": True,
-                        "output_path": output_path,
-                        "metadata": {
-                            "processing_time": time.time() - start_time,
-                            "model_used": "IDM-VTON Official",
-                            "inference_steps": 30
-                        }
-                    }
-                else:
-                    raise Exception("IDM-VTON implementations not available")
-                    
-            except Exception as e:
-                print(f"⚠️  IDM-VTON implementations failed: {e}, falling back to original processor")
+            # Use IDM-VTON - NO FALLBACKS
+            if self.simplified_idm_vton and self.simplified_idm_vton != False and self.simplified_idm_vton.load_models():
+                print("✅ Using IDM-VTON implementation")
+                from PIL import Image
                 
-                # Initialize the IDM-VTON processor
-                processor = IDMVTONProcessor()
+                person_image = Image.open(person_image_path)
+                garment_image = Image.open(garment_image_path)
                 
-                # Check if the processor is available
-                if not processor.is_available():
-                    return {
-                        "success": False,
-                        "error": "IDM-VTON model is not available. Please check model installation.",
-                        "metadata": {"processing_time": time.time() - start_time}
-                    }
-                
-                # Process the virtual try-on
-                result = processor.process(
-                    person_image_path=person_image_path,
-                    garment_image_path=garment_image_path,
-                    output_path=output_path,
-                    **kwargs
+                result_image, mask_image = self.simplified_idm_vton.generate_virtual_tryon(
+                    person_image=person_image,
+                    garment_image=garment_image,
+                    garment_description="a stylish garment",
+                    auto_mask=True,
+                    denoise_steps=30,
+                    seed=42
                 )
+                
+                # Save the result
+                result_image.save(output_path)
+                
+                result = {
+                    "success": True,
+                    "output_path": output_path,
+                    "metadata": {
+                        "processing_time": time.time() - start_time,
+                        "model_used": "IDM-VTON Simplified",
+                        "inference_steps": 30
+                    }
+                }
+            elif self.official_idm_vton and self.official_idm_vton != False and self.official_idm_vton.load_models():
+                print("🎯 Using Official IDM-VTON implementation")
+                from PIL import Image
+                
+                person_image = Image.open(person_image_path)
+                garment_image = Image.open(garment_image_path)
+                
+                result_image, mask_image = self.official_idm_vton.generate_virtual_tryon(
+                    person_image=person_image,
+                    garment_image=garment_image,
+                    garment_description="a stylish garment",
+                    auto_mask=True,
+                    denoise_steps=30,
+                    seed=42
+                )
+                
+                # Save the result
+                result_image.save(output_path)
+                
+                result = {
+                    "success": True,
+                    "output_path": output_path,
+                    "metadata": {
+                        "processing_time": time.time() - start_time,
+                        "model_used": "IDM-VTON Official",
+                        "inference_steps": 30
+                    }
+                }
+            else:
+                raise Exception("IDM-VTON model not available")
             
             # Add total processing time
             result["metadata"]["total_processing_time"] = time.time() - start_time
@@ -459,6 +420,8 @@ class AIService:
         except Exception as e:
             error_msg = f"Error in virtual try-on processing: {str(e)}"
             print(f"❌ {error_msg}")
+            import traceback
+            print(f"Full traceback:\n{traceback.format_exc()}")
             return {
                 "success": False,
                 "error": error_msg,

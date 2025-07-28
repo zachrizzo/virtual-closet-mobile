@@ -1722,8 +1722,10 @@ class StableDiffusionXLInpaintPipeline(
                 ip_adapter_image, device, batch_size * num_images_per_prompt
             )
 
-            #project outside for loop
-            image_embeds = self.unet.encoder_hid_proj(image_embeds).to(prompt_embeds.dtype)
+            # For ip_image_proj, the projection is handled inside the UNet forward pass
+            # Only project here if not using ip_image_proj
+            if hasattr(self.unet.config, 'encoder_hid_dim_type') and self.unet.config.encoder_hid_dim_type != "ip_image_proj":
+                image_embeds = self.unet.encoder_hid_proj(image_embeds).to(prompt_embeds.dtype)
 
 
         # 11. Denoising loop
@@ -1784,7 +1786,15 @@ class StableDiffusionXLInpaintPipeline(
                 if ip_adapter_image is not None:
                     added_cond_kwargs["image_embeds"] = image_embeds
                 # down,reference_features = self.UNet_Encoder(cloth,t, text_embeds_cloth,added_cond_kwargs= {"text_embeds": pooled_prompt_embeds_c, "time_ids": add_time_ids},return_dict=False)
-                down,reference_features = self.unet_encoder(cloth,t, text_embeds_cloth,return_dict=False)
+                # Call unet_encoder and handle different return formats
+                encoder_output = self.unet_encoder(cloth,t, text_embeds_cloth,return_dict=False)
+                if isinstance(encoder_output, tuple) and len(encoder_output) == 2:
+                    down, reference_features = encoder_output
+                else:
+                    # Fallback for standard UNet that returns single output
+                    down = encoder_output[0] if isinstance(encoder_output, tuple) else encoder_output
+                    # Use empty reference features
+                    reference_features = []
                 # print(type(reference_features))
                 # print(reference_features)
                 reference_features = list(reference_features)

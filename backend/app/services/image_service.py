@@ -19,50 +19,37 @@ class ImageService:
     def _load_u2net_model(self):
         """Load U-2-Net model if available"""
         try:
-            import torch
-            # Skip U2NET import for now - model implementation pending
-            print("U-2-Net model loading skipped (model file implementation pending)")
-            self.u2net_available = False
-            return
-            
-            device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-            
-            # Try to load the appropriate model
-            model_loaded = False
+            from app.ai.background_removal import BackgroundRemoval
             
             # Try portrait model first (smaller, faster)
             try:
-                model_path = get_model_path("u2net", "model_portrait")
-                if model_path.exists():
-                    from app.ai.background_removal.u2net_model import U2NETP
-                    self.u2net_model = U2NETP(3, 1)
-                    self.u2net_model.load_state_dict(torch.load(str(model_path), map_location=device))
-                    model_loaded = True
-                    print(f"U-2-Net Portrait model loaded on {device}")
+                self.bg_remover = BackgroundRemoval(model_name="u2netp")
+                if self.bg_remover.processor and self.bg_remover.processor.model is not None:
+                    self.u2net_available = True
+                    print("✅ U-2-Net Portrait model loaded successfully")
+                    return
             except:
                 pass
             
             # Fall back to full model
-            if not model_loaded:
-                try:
-                    model_path = get_model_path("u2net", "model")
-                    if model_path.exists():
-                        self.u2net_model = U2NET(3, 1)
-                        self.u2net_model.load_state_dict(torch.load(str(model_path), map_location=device))
-                        model_loaded = True
-                        print(f"U-2-Net full model loaded on {device}")
-                except:
-                    pass
+            try:
+                self.bg_remover = BackgroundRemoval(model_name="u2net")
+                if self.bg_remover.processor and self.bg_remover.processor.model is not None:
+                    self.u2net_available = True
+                    print("✅ U-2-Net full model loaded successfully")
+                    return
+            except:
+                pass
             
-            if model_loaded:
-                self.u2net_model.to(device)
-                self.u2net_model.eval()
-                self.device = device
-            else:
-                raise Exception("No U-2-Net model could be loaded")
+            # If no model loaded
+            self.u2net_available = False
+            self.bg_remover = None
+            print("⚠️ U-2-Net models not available")
+            
         except Exception as e:
             print(f"Failed to load U-2-Net model: {e}")
             self.u2net_available = False
+            self.bg_remover = None
     
     async def process_clothing_image(self, image_path: str) -> Dict[str, str]:
         """Process clothing image: background removal and thumbnail generation"""
@@ -91,7 +78,7 @@ class ImageService:
             thumbnail.save(thumbnail_path, quality=85)
             
             # Remove background if model is available
-            if self.u2net_available:
+            if self.u2net_available and hasattr(self, 'bg_remover') and self.bg_remover:
                 processed_path = await self._remove_background(resized_path)
             else:
                 # If no model, just use resized image
@@ -106,43 +93,18 @@ class ImageService:
     async def _remove_background(self, image_path: Path) -> Path:
         """Remove background using U-2-Net model"""
         try:
-            import torch
-            import torchvision.transforms as transforms
+            if not self.bg_remover:
+                return image_path
             
-            # Load and preprocess image
-            transform = transforms.Compose([
-                transforms.Resize((320, 320)),
-                transforms.ToTensor(),
-                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-            ])
-            
+            # Load image
             img = Image.open(image_path).convert('RGB')
-            img_tensor = transform(img).unsqueeze(0).to(self.device)
             
-            # Run inference
-            with torch.no_grad():
-                d1, _, _, _, _, _, _ = self.u2net_model(img_tensor)
-                
-            # Process mask
-            pred = d1.squeeze().cpu().numpy()
-            pred = (pred - pred.min()) / (pred.max() - pred.min())
-            pred = (pred * 255).astype(np.uint8)
-            
-            # Resize mask to original size
-            mask = Image.fromarray(pred).resize(img.size, Image.Resampling.LANCZOS)
-            
-            # Apply mask to image
-            img_array = np.array(img)
-            mask_array = np.array(mask) / 255.0
-            
-            # Create RGBA image
-            result = np.zeros((img_array.shape[0], img_array.shape[1], 4), dtype=np.uint8)
-            result[:, :, :3] = img_array
-            result[:, :, 3] = (mask_array * 255).astype(np.uint8)
+            # Remove background
+            result_image, mask = self.bg_remover.remove_background(img)
             
             # Save processed image
             processed_path = image_path.parent / f"nobg_{image_path.name.replace('.jpg', '.png').replace('.jpeg', '.png')}"
-            Image.fromarray(result).save(processed_path)
+            result_image.save(processed_path)
             
             return processed_path
             

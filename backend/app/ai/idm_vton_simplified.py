@@ -3,15 +3,10 @@ Simplified IDM-VTON Implementation
 Core IDM-VTON without DensePose dependency for immediate testing
 """
 
-import sys
-import os
-sys.path.append('/Users/zachrizzo/Desktop/programming/virtual-closet/virtual-closet-backend/app/ai/')
-sys.path.append('/Users/zachrizzo/Desktop/programming/virtual-closet/virtual-closet-backend/app/ai/idm_vton_custom/')
+from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageDraw
 from app.ai.idm_vton_custom.tryon_pipeline import StableDiffusionXLInpaintPipeline as TryonPipeline
-from app.ai.idm_vton_custom.unet_hacked_garmnet import UNet2DConditionModel as UNet2DConditionModel_ref
-from app.ai.idm_vton_custom.unet_hacked_tryon import UNet2DConditionModel
 from transformers import (
     CLIPImageProcessor,
     CLIPVisionModelWithProjection,
@@ -64,19 +59,47 @@ class IDMVTONSimplified:
         try:
             logger.info("Loading IDM-VTON models with DensePose support...")
             
-            # Load custom UNets
-            unet = UNet2DConditionModel.from_pretrained(
-                self.model_path,
-                subfolder="unet",
-                torch_dtype=self.dtype,
-            )
+            # Load custom UNet with config modifications
+            import json
+            unet_config_path = Path(self.model_path) / "unet" / "config.json"
+            with open(unet_config_path, 'r') as f:
+                unet_config = json.load(f)
+            
+            # Don't remove encoder_hid_dim_type, just load as is
+            from app.ai.idm_vton_custom.unet_hacked_tryon import UNet2DConditionModel as CustomUNet
+            unet = CustomUNet.from_config(unet_config)
+            
+            # Load the state dict
+            unet_path = Path(self.model_path) / "unet" / "diffusion_pytorch_model.bin"
+            if not unet_path.exists():
+                unet_path = Path(self.model_path) / "unet" / "diffusion_pytorch_model.safetensors"
+                from safetensors import safe_open
+                with safe_open(unet_path, framework="pt", device="cpu") as f:
+                    unet_state_dict = {k: f.get_tensor(k) for k in f.keys()}
+            else:
+                unet_state_dict = torch.load(unet_path, map_location='cpu')
+            unet.load_state_dict(unet_state_dict, strict=False)
+            unet = unet.to(dtype=self.dtype)
             unet.requires_grad_(False)
             
-            unet_encoder = UNet2DConditionModel_ref.from_pretrained(
-                self.model_path,
-                subfolder="unet_encoder", 
-                torch_dtype=self.dtype,
-            )
+            # Load encoder UNet
+            unet_encoder_config_path = Path(self.model_path) / "unet_encoder" / "config.json"
+            with open(unet_encoder_config_path, 'r') as f:
+                unet_encoder_config = json.load(f)
+            
+            from app.ai.idm_vton_custom.unet_hacked_garmnet import UNet2DConditionModel as EncoderUNet
+            unet_encoder = EncoderUNet.from_config(unet_encoder_config)
+            
+            unet_encoder_path = Path(self.model_path) / "unet_encoder" / "diffusion_pytorch_model.bin"
+            if not unet_encoder_path.exists():
+                unet_encoder_path = Path(self.model_path) / "unet_encoder" / "diffusion_pytorch_model.safetensors"
+                from safetensors import safe_open
+                with safe_open(unet_encoder_path, framework="pt", device="cpu") as f:
+                    unet_encoder_state_dict = {k: f.get_tensor(k) for k in f.keys()}
+            else:
+                unet_encoder_state_dict = torch.load(unet_encoder_path, map_location='cpu')
+            unet_encoder.load_state_dict(unet_encoder_state_dict, strict=False)
+            unet_encoder = unet_encoder.to(dtype=self.dtype)
             unet_encoder.requires_grad_(False)
             
             # Load tokenizers
@@ -149,8 +172,16 @@ class IDMVTONSimplified:
             # Attach the encoder UNet (crucial for IDM-VTON)
             self.pipe.unet_encoder = unet_encoder
             
-            # Move pipeline to device
-            self.pipe.to(self.device)
+            # Move pipeline to device (handle MPS properly)
+            if self.device == "mps":
+                # For MPS, move components individually
+                self.pipe.vae = self.pipe.vae.to(self.device)
+                self.pipe.text_encoder = self.pipe.text_encoder.to(self.device)
+                self.pipe.text_encoder_2 = self.pipe.text_encoder_2.to(self.device)
+                self.pipe.unet = self.pipe.unet.to(self.device)
+                self.pipe.image_encoder = self.pipe.image_encoder.to(self.device)
+            else:
+                self.pipe.to(self.device)
             
             # Load preprocessing models  
             self.parsing_model = Parsing(0)
@@ -169,6 +200,47 @@ class IDMVTONSimplified:
         except Exception as e:
             logger.error(f"❌ Failed to load IDM-VTON models: {e}")
             return False
+    
+    def _create_pose_visualization(self, human_img, keypoints):
+        """Create a pose visualization from OpenPose keypoints"""
+        import cv2
+        import numpy as np
+        
+        # Create a blank canvas
+        h, w = 1024, 768
+        pose_img = np.zeros((h, w, 3), dtype=np.uint8)
+        
+        # Define skeleton connections (COCO format)
+        skeleton = [
+            [16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
+            [6, 12], [7, 13], [6, 7], [6, 8], [7, 9],
+            [8, 10], [9, 11], [2, 3], [1, 2], [1, 3],
+            [2, 4], [3, 5], [4, 6], [5, 7]
+        ]
+        
+        # Get keypoints
+        points = keypoints.get("pose_keypoints_2d", [])
+        if len(points) >= 18:
+            # Draw skeleton
+            for connection in skeleton:
+                if connection[0]-1 < len(points) and connection[1]-1 < len(points):
+                    pt1 = points[connection[0]-1]
+                    pt2 = points[connection[1]-1]
+                    if pt1[0] > 0 and pt1[1] > 0 and pt2[0] > 0 and pt2[1] > 0:
+                        # Scale to image size
+                        x1, y1 = int(pt1[0] * w / 384), int(pt1[1] * h / 512)
+                        x2, y2 = int(pt2[0] * w / 384), int(pt2[1] * h / 512)
+                        cv2.line(pose_img, (x1, y1), (x2, y2), (255, 255, 255), 3)
+            
+            # Draw keypoints
+            for i, point in enumerate(points[:18]):
+                if point[0] > 0 and point[1] > 0:
+                    x, y = int(point[0] * w / 384), int(point[1] * h / 512)
+                    cv2.circle(pose_img, (x, y), 5, (0, 255, 0), -1)
+        
+        # Convert to PIL and resize
+        pose_pil = Image.fromarray(pose_img)
+        return pose_pil.resize((768, 1024))
     
     def pil_to_binary_mask(self, pil_image, threshold=0):
         """Convert PIL image to binary mask"""
@@ -204,14 +276,49 @@ class IDMVTONSimplified:
         if not self.pipe:
             raise RuntimeError("Models not loaded. Call load_models() first.")
         
-        # Move models to device
-        self.openpose_model.preprocessor.body_estimation.model.to(self.device)
-        self.pipe.to(self.device)
-        self.pipe.unet_encoder.to(self.device)
+        # Move models to device (ensure all components are on the correct device)
+        try:
+            self.openpose_model.preprocessor.body_estimation.model.to(self.device)
+        except:
+            # OpenPose might not support MPS
+            pass
         
-        # Resize inputs
-        garm_img = garment_image.convert("RGB").resize((768, 1024))
+        # Ensure pipeline components are on device
+        if self.device == "mps":
+            # Already moved in load_models
+            pass
+        else:
+            self.pipe.to(self.device)
+        
+        # Move encoder UNet
+        self.pipe.unet_encoder = self.pipe.unet_encoder.to(self.device)
+        
+        # Resize inputs with aspect ratio preservation
+        def resize_preserve_aspect(img, target_size=(768, 1024)):
+            """Resize image preserving aspect ratio and pad to target size"""
+            target_w, target_h = target_size
+            
+            # Calculate scaling factor to fit within target size
+            scale = min(target_w / img.width, target_h / img.height)
+            new_w = int(img.width * scale)
+            new_h = int(img.height * scale)
+            
+            # Resize with aspect ratio preserved
+            resized = img.resize((new_w, new_h), Image.Resampling.LANCZOS)
+            
+            # Create new image with target size and paste resized image centered
+            result = Image.new('RGB', target_size, color='white')
+            paste_x = (target_w - new_w) // 2
+            paste_y = (target_h - new_h) // 2
+            result.paste(resized, (paste_x, paste_y))
+            
+            return result, (new_w, new_h), (paste_x, paste_y)
+        
+        garm_img, _, _ = resize_preserve_aspect(garment_image.convert("RGB"))
         human_img_orig = person_image.convert("RGB")
+        
+        # Store original size and processing info
+        original_size = human_img_orig.size
         
         # Handle cropping
         if auto_crop:
@@ -224,16 +331,24 @@ class IDMVTONSimplified:
             bottom = (height + target_height) / 2
             cropped_img = human_img_orig.crop((left, top, right, bottom))
             crop_size = cropped_img.size
-            human_img = cropped_img.resize((768, 1024))
+            human_img, resize_info, paste_info = resize_preserve_aspect(cropped_img)
         else:
-            human_img = human_img_orig.resize((768, 1024))
+            human_img, resize_info, paste_info = resize_preserve_aspect(human_img_orig)
         
         # Generate or process mask
         if auto_mask:
-            keypoints = self.openpose_model(human_img.resize((384, 512)))
-            model_parse, _ = self.parsing_model(human_img.resize((384, 512)))
-            mask, mask_gray = get_mask_location('hd', "upper_body", model_parse, keypoints)
-            mask = mask.resize((768, 1024))
+            try:
+                keypoints = self.openpose_model(human_img.resize((384, 512)))
+                model_parse, _ = self.parsing_model(human_img.resize((384, 512)))
+                mask, mask_gray = get_mask_location('hd', "upper_body", model_parse, keypoints)
+                mask = mask.resize((768, 1024))
+            except Exception as e:
+                logger.warning(f"Auto mask generation failed: {e}, using default mask")
+                # Create default upper body mask
+                mask = Image.new('L', (768, 1024), 0)
+                draw = ImageDraw.Draw(mask)
+                # Draw a simple upper body mask
+                draw.rectangle([200, 100, 568, 600], fill=255)
         else:
             if mask_image:
                 mask = self.pil_to_binary_mask(mask_image.convert("RGB").resize((768, 1024)))
@@ -251,8 +366,11 @@ class IDMVTONSimplified:
             pose_img = self.densepose_processor.process_image(human_img)
             pose_img = pose_img.resize((768, 1024))
         else:
-            logger.warning("DensePose not available, using human image as fallback")
+            # For IDM-VTON, we need proper pose estimation, not fallbacks
+            logger.error("DensePose not available - this will significantly impact quality")
+            # Use the human image but note this is not ideal
             pose_img = human_img.resize((768, 1024))
+            # TODO: Install detectron2 and DensePose for better results
         
         # Generate virtual try-on
         with torch.no_grad():
@@ -300,7 +418,7 @@ class IDMVTONSimplified:
                 generator = torch.Generator(self.device).manual_seed(seed) if seed is not None else None
                 
                 # Generate!
-                images = self.pipe(
+                result = self.pipe(
                     prompt_embeds=prompt_embeds.to(self.device, self.dtype),
                     negative_prompt_embeds=negative_prompt_embeds.to(self.device, self.dtype),
                     pooled_prompt_embeds=pooled_prompt_embeds.to(self.device, self.dtype),
@@ -317,12 +435,46 @@ class IDMVTONSimplified:
                     width=768,
                     ip_adapter_image=garm_img.resize((768, 1024)),
                     guidance_scale=2.0,
-                )[0]
+                )
+                
+                # Extract images from result
+                if hasattr(result, 'images'):
+                    images = result.images
+                elif isinstance(result, tuple):
+                    # Pipeline returns (image,) as a single-element tuple
+                    images = result
+                elif isinstance(result, list):
+                    images = result
+                else:
+                    # Single image result
+                    images = [result]
         
         # Handle cropping output
+        # Extract the actual image from potentially nested lists/tuples
+        if isinstance(images, (list, tuple)):
+            out_img = images[0]
+            # Handle nested lists/tuples
+            while isinstance(out_img, (list, tuple)) and len(out_img) > 0:
+                out_img = out_img[0]
+        else:
+            out_img = images
+            
+        # Ensure we have a PIL Image
+        if not isinstance(out_img, Image.Image):
+            raise ValueError(f"Expected PIL Image, got {type(out_img)}")
+            
         if auto_crop:
-            out_img = images[0].resize(crop_size)
+            # Extract the region and resize to original crop size
+            extracted = out_img.crop((paste_info[0], paste_info[1], 
+                                     paste_info[0] + resize_info[0], 
+                                     paste_info[1] + resize_info[1]))
+            out_img = extracted.resize(crop_size, Image.Resampling.LANCZOS)
             human_img_orig.paste(out_img, (int(left), int(top)))
             return human_img_orig, mask_gray
         else:
-            return images[0], mask_gray
+            # Extract the actual content region and resize to original size
+            extracted = out_img.crop((paste_info[0], paste_info[1], 
+                                     paste_info[0] + resize_info[0], 
+                                     paste_info[1] + resize_info[1]))
+            final_img = extracted.resize(original_size, Image.Resampling.LANCZOS)
+            return final_img, mask_gray
