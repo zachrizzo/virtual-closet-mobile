@@ -23,11 +23,7 @@ interface Props {
 
 interface ClothingForm {
   name: string;
-  brand?: string;
-  size?: string;
-  cost?: string;
   primaryColor: string;
-  notes?: string;
 }
 
 const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
@@ -50,11 +46,7 @@ const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
   } = useForm<ClothingForm>({
     defaultValues: {
       name: '',
-      brand: '',
-      size: '',
-      cost: '',
       primaryColor: '',
-      notes: '',
     },
   });
 
@@ -86,15 +78,31 @@ const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaType.Images,
-      allowsEditing: true,
-      aspect: [3, 4],
-      quality: 0.9,
-    });
+    console.log('pickImage called');
+    
+    // Request permissions first
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'Gallery permission is required to select photos');
+      return;
+    }
+    
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [3, 4],
+        quality: 0.9,
+      });
 
-    if (!result.canceled) {
-      setSelectedPhoto(result.assets[0].uri);
+      console.log('Image picker result:', result);
+      
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setSelectedPhoto(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      Alert.alert('Error', 'Failed to select image from gallery');
     }
   };
 
@@ -106,7 +114,7 @@ const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
     }
 
     const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaType.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [3, 4],
       quality: 0.9,
@@ -128,16 +136,15 @@ const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
       const result = await createClothing({
         name: data.name,
         category,
-        brand: data.brand,
-        size: data.size,
-        cost: data.cost ? parseFloat(data.cost) : undefined,
+        brand: 'Generic', // Default brand
+        size: 'M', // Default size
         color: {
           primary: data.primaryColor,
         },
-        season: selectedSeasons,
-        occasion: selectedOccasions,
-        tags,
-        notes: data.notes,
+        season: selectedSeasons.length > 0 ? selectedSeasons : ['spring'], // Default season
+        occasion: selectedOccasions.length > 0 ? selectedOccasions : ['casual'], // Default occasion
+        tags: tags.length > 0 ? tags : [],
+        notes: '',
       }).unwrap();
 
       // Upload image
@@ -196,13 +203,17 @@ const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
         </View>
 
         <View style={styles.form}>
+          <Text style={styles.formTitle}>Add Clothing Item</Text>
+          <Text style={styles.formSubtitle}>Just add a photo and basic details!</Text>
+          
           <Controller
             control={control}
             name="name"
-            rules={{ required: 'Name is required' }}
+            rules={{ required: 'Item name is required' }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                label="Item Name *"
+                label="What is this item? *"
+                placeholder="e.g., Blue Jeans, White T-Shirt, Red Dress"
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -231,61 +242,12 @@ const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
 
           <Controller
             control={control}
-            name="brand"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                label="Brand"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                mode="outlined"
-                style={styles.input}
-              />
-            )}
-          />
-
-          <View style={styles.row}>
-            <View style={styles.halfField}>
-              <Controller
-                control={control}
-                name="size"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    label="Size"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    mode="outlined"
-                  />
-                )}
-              />
-            </View>
-
-            <View style={styles.halfField}>
-              <Controller
-                control={control}
-                name="cost"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    label="Cost ($)"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    mode="outlined"
-                    keyboardType="numeric"
-                  />
-                )}
-              />
-            </View>
-          </View>
-
-          <Controller
-            control={control}
             name="primaryColor"
-            rules={{ required: 'Primary color is required' }}
+            rules={{ required: 'Color is required' }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
-                label="Primary Color *"
+                label="Main Color *"
+                placeholder="e.g., Blue, Red, Black, Multi-color"
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -299,76 +261,6 @@ const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
             {errors.primaryColor?.message}
           </HelperText>
 
-          <Text style={styles.sectionTitle}>Season</Text>
-          <View style={styles.chipContainer}>
-            {Object.values(Season).map(season => (
-              <Chip
-                key={season}
-                selected={selectedSeasons.includes(season)}
-                onPress={() => toggleSeason(season)}
-                style={styles.chip}
-              >
-                {season}
-              </Chip>
-            ))}
-          </View>
-
-          <Text style={styles.sectionTitle}>Occasion</Text>
-          <View style={styles.chipContainer}>
-            {Object.values(Occasion).map(occasion => (
-              <Chip
-                key={occasion}
-                selected={selectedOccasions.includes(occasion)}
-                onPress={() => toggleOccasion(occasion)}
-                style={styles.chip}
-              >
-                {occasion}
-              </Chip>
-            ))}
-          </View>
-
-          <Text style={styles.sectionTitle}>Tags</Text>
-          <View style={styles.tagInputContainer}>
-            <TextInput
-              label="Add tag"
-              value={newTag}
-              onChangeText={setNewTag}
-              mode="outlined"
-              style={styles.tagInput}
-              onSubmitEditing={addTag}
-            />
-            <Button mode="text" onPress={addTag}>
-              Add
-            </Button>
-          </View>
-          <View style={styles.chipContainer}>
-            {tags.map(tag => (
-              <Chip
-                key={tag}
-                onClose={() => removeTag(tag)}
-                style={styles.chip}
-              >
-                {tag}
-              </Chip>
-            ))}
-          </View>
-
-          <Controller
-            control={control}
-            name="notes"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                label="Notes"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                mode="outlined"
-                multiline
-                numberOfLines={3}
-                style={styles.input}
-              />
-            )}
-          />
 
           <View style={styles.buttonContainer}>
             <Button
@@ -439,6 +331,19 @@ const styles = StyleSheet.create({
   },
   form: {
     padding: 16,
+  },
+  formTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  formSubtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 24,
+    textAlign: 'center',
   },
   input: {
     marginBottom: 8,

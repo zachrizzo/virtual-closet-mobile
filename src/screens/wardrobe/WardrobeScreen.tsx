@@ -72,23 +72,31 @@ const WardrobeScreen: React.FC<Props> = ({ navigation }) => {
     item.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const renderClothingItem = ({ item }: { item: ClothingItem }) => (
-    <TouchableOpacity
-      style={viewMode === 'grid' ? styles.itemContainer : styles.listItemContainer}
-      onPress={() => navigation.navigate('ClothingDetail', { itemId: item.id })}
-    >
-      <Card style={viewMode === 'grid' ? styles.card : styles.listCard}>
-        <View style={viewMode === 'grid' ? styles.cardContent : styles.listCardContent}>
-          <Image
-            source={
-              typeof item.images.thumbnail === 'number' || typeof item.images.original === 'number'
-                ? item.images.thumbnail || item.images.original
-                : { uri: item.images.thumbnail || item.images.original || '' }
-            }
-            style={viewMode === 'grid' ? styles.itemImage : styles.listItemImage}
-            contentFit="cover"
-            placeholder={null}
-          />
+  const renderClothingItem = ({ item }: { item: ClothingItem }) => {
+    // Debug logging for images
+    console.log('Rendering item:', item.name, 'Images:', {
+      thumbnail: item.images.thumbnail?.substring(0, 50),
+      original: item.images.original?.substring(0, 50),
+      processed: item.images.processed?.substring(0, 50),
+    });
+    
+    return (
+      <TouchableOpacity
+        style={viewMode === 'grid' ? styles.itemContainer : styles.listItemContainer}
+        onPress={() => navigation.navigate('ClothingDetail', { itemId: item.id })}
+      >
+        <Card style={viewMode === 'grid' ? styles.card : styles.listCard}>
+          <View style={viewMode === 'grid' ? styles.cardContent : styles.listCardContent}>
+            <Image
+              source={
+                typeof item.images.thumbnail === 'number' || typeof item.images.original === 'number'
+                  ? item.images.thumbnail || item.images.original
+                  : { uri: item.images.thumbnail || item.images.original || '' }
+              }
+              style={viewMode === 'grid' ? styles.itemImage : styles.listItemImage}
+              contentFit="cover"
+              placeholder={null}
+            />
           {item.isFavorite && (
             <View style={styles.favoriteIcon}>
               <MaterialCommunityIcons name="heart" size={16} color="#FF6B6B" />
@@ -120,6 +128,7 @@ const WardrobeScreen: React.FC<Props> = ({ navigation }) => {
       </Card>
     </TouchableOpacity>
   );
+};
 
   const stats = {
     total: clothing.length,

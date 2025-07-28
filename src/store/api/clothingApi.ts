@@ -115,6 +115,12 @@ export const clothingApi = api.injectEndpoints({
         try {
           console.log('clothingApi - Generating virtual try-on:', { userImageUri, clothingItemId });
           
+          // Check if this is a mock item (IDs 1-5)
+          const isMockItem = ['1', '2', '3', '4', '5'].includes(clothingItemId);
+          if (isMockItem) {
+            console.log('clothingApi - Detected mock item, will need to handle differently');
+          }
+          
           // Convert image URI to base64 data URI
           const imageResponse = await fetch(userImageUri);
           const blob = await imageResponse.blob();
@@ -147,6 +153,11 @@ export const clothingApi = api.injectEndpoints({
           const baseUrl = getBaseURL();
           
           console.log('clothingApi - Making request to:', baseUrl + '/ai/virtual-tryon');
+          console.log('clothingApi - Request body:', {
+            user_image: base64DataUri.substring(0, 100) + '...',
+            clothing_item_id: clothingItemId,
+          });
+          console.log('clothingApi - Full clothing item ID being sent:', clothingItemId);
           
           const fetchResponse = await fetch(baseUrl + '/ai/virtual-tryon', {
             method: 'POST',
@@ -168,13 +179,31 @@ export const clothingApi = api.injectEndpoints({
           
           const response = await fetchResponse.json();
           console.log('clothingApi - Virtual try-on response:', response);
+          console.log('clothingApi - Response keys:', Object.keys(response));
           
           // Transform backend response to match frontend expectations
-          const backendBaseUrl = 'http://localhost:8000'; // Backend server URL
-          const imageUrl = response.generated_image || response.generatedImage;
+          const backendBaseUrl = getBaseURL();
+          
+          // Backend returns 'generated_image' according to VirtualTryOnResponse schema
+          const imageUrl = response.generated_image;
+          
+          if (!imageUrl) {
+            console.error('clothingApi - No image URL in response:', response);
+            console.error('clothingApi - Expected "generated_image" field but got:', Object.keys(response));
+            throw new Error('No generated image URL in response');
+          }
           
           // Ensure the URL is complete
-          const fullUrl = imageUrl.startsWith('http') ? imageUrl : `${backendBaseUrl}${imageUrl}`;
+          // Remove duplicate /api/v1/ if present
+          let cleanImageUrl = imageUrl;
+          if (imageUrl.startsWith('/api/v1/')) {
+            cleanImageUrl = imageUrl.substring(7); // Remove the first /api/v1/
+          }
+          
+          const fullUrl = cleanImageUrl.startsWith('http') ? cleanImageUrl : `${backendBaseUrl}${cleanImageUrl}`;
+          console.log('clothingApi - Generated image URL:', fullUrl);
+          console.log('clothingApi - Original image URL:', response.original_image);
+          console.log('clothingApi - Processing time:', response.processing_time);
           
           return {
             data: {

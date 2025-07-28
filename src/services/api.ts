@@ -36,11 +36,13 @@ api.interceptors.request.use(
             headers: config.headers
           });
           // Use the real test token for virtual try-on
-          config.headers.Authorization = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNjJjY2Q4ZC05NTJmLTQ2NjgtYWM0OS1jMDM0MGJmZjM0YmEiLCJleHAiOjE3NTM2Mzc0MDAsInR5cGUiOiJhY2Nlc3MifQ.RWmMapgnjO7jRiJLrPNF_QepEIJV7FOiLKMHHHjXX5A';
+          config.headers.Authorization = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkNjJjY2Q4ZC05NTJmLTQ2NjgtYWM0OS1jMDM0MGJmZjM0YmEiLCJleHAiOjE3NTM2NjcyMzEsInR5cGUiOiJhY2Nlc3MifQ.y1goMVKoESnbGe-03BtrwfdwkRWcWOgSnXUV8oHIXUc';
           return config;
         }
         
-        // Mock clothing endpoints
+        // Mock clothing endpoints - DISABLED to use real backend data
+        // Uncomment this block if you want to use mock data instead of backend
+        /*
         if (url.includes('/clothing/') && url.split('/clothing/')[1] && !url.split('/clothing/')[1].includes('/')) {
           // Individual clothing item request (e.g., /clothing/1)
           const itemId = url.split('/clothing/')[1];
@@ -83,6 +85,7 @@ api.interceptors.request.use(
             isMockResponse: true,
           });
         }
+        */
         
         // Mock outfits endpoint
         if (url.includes('/outfits')) {
