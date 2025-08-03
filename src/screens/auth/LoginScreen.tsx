@@ -1,274 +1,211 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { Text, TextInput, Button, HelperText } from 'react-native-paper';
+import {
+  View,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+import { Text, TextInput, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useForm, Controller } from 'react-hook-form';
+import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { AuthStackParamList } from '@/navigation/AuthNavigator';
-import { useAppDispatch } from '@/store';
-import { authApi } from '@/services/auth';
-
-type LoginScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Login'>;
+import { unifiedAPI } from '../../services/api/unifiedService';
 
 interface Props {
-  navigation: LoginScreenNavigationProp;
+  onLogin: () => void;
 }
 
-interface LoginForm {
-  email: string;
-  password: string;
-}
-
-const LoginScreen: React.FC<Props> = ({ navigation }) => {
-  const dispatch = useAppDispatch();
-  const [showPassword, setShowPassword] = useState(false);
+const LoginScreen: React.FC<Props> = ({ onLogin }) => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isTestLoading, setIsTestLoading] = useState(false);
 
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<LoginForm>({
-    defaultValues: {
-      email: 'jane.doe@example.com',
-      password: 'secret',
-    },
-  });
+  const handleSubmit = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
 
-  const onSubmit = async (data: LoginForm) => {
     try {
       setIsLoading(true);
-      await authApi.login(data.email, data.password);
+      
+      console.log('Attempting login with:', { email, password });
+      
+      if (isLogin) {
+        await unifiedAPI.auth.login(email, password);
+      } else {
+        // For MVP, register logs in immediately
+        await unifiedAPI.auth.login(email, password);
+      }
+      
+      console.log('Login successful');
+      onLogin();
     } catch (error) {
       console.error('Login error:', error);
+      Alert.alert('Error', isLogin ? 'Invalid credentials' : 'Registration failed');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleTestSignIn = async () => {
-    try {
-      setIsTestLoading(true);
-      // Use the mock test credentials
-      await authApi.login('jane.doe@example.com', 'secret');
-    } catch (error) {
-      console.error('Test login error:', error);
-    } finally {
-      setIsTestLoading(false);
-    }
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+    <LinearGradient
+      colors={['#6C63FF', '#8B87FF']}
+      style={styles.container}
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.content}
         >
           <View style={styles.header}>
-            <MaterialCommunityIcons
-              name="arrow-left"
-              size={24}
-              color="#1A1A1A"
-              onPress={() => navigation.goBack()}
+            <MaterialCommunityIcons name="hanger" size={80} color="#FFFFFF" />
+            <Text style={styles.title}>Virtual Closet</Text>
+            <Text style={styles.subtitle}>Try on your clothes virtually</Text>
+          </View>
+
+          <View style={styles.form}>
+            <TextInput
+              label="Email"
+              value={email}
+              onChangeText={setEmail}
+              mode="outlined"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={styles.input}
+              outlineColor="rgba(255, 255, 255, 0.3)"
+              activeOutlineColor="#FFFFFF"
+              textColor="#FFFFFF"
+              theme={{
+                colors: {
+                  onSurfaceVariant: 'rgba(255, 255, 255, 0.7)',
+                },
+              }}
             />
+
+            <TextInput
+              label="Password"
+              value={password}
+              onChangeText={setPassword}
+              mode="outlined"
+              secureTextEntry
+              style={styles.input}
+              outlineColor="rgba(255, 255, 255, 0.3)"
+              activeOutlineColor="#FFFFFF"
+              textColor="#FFFFFF"
+              theme={{
+                colors: {
+                  onSurfaceVariant: 'rgba(255, 255, 255, 0.7)',
+                },
+              }}
+            />
+
+            <Button
+              mode="contained"
+              onPress={handleSubmit}
+              loading={isLoading}
+              disabled={isLoading}
+              style={styles.button}
+              buttonColor="#FFFFFF"
+              textColor="#6C63FF"
+            >
+              {isLogin ? 'Login' : 'Create Account'}
+            </Button>
+
+            <TouchableOpacity
+              onPress={() => setIsLogin(!isLogin)}
+              style={styles.switchButton}
+            >
+              <Text style={styles.switchText}>
+                {isLogin
+                  ? "Don't have an account? Sign up"
+                  : "Already have an account? Login"}
+              </Text>
+            </TouchableOpacity>
+
+            {/* Test Login Button */}
+            <TouchableOpacity
+              onPress={async () => {
+                setEmail('test@example.com');
+                setPassword('password123');
+                // Auto-submit after setting credentials
+                setTimeout(() => {
+                  handleSubmit();
+                }, 100);
+              }}
+              style={styles.testButton}
+            >
+              <Text style={styles.testButtonText}>Quick Test Login</Text>
+            </TouchableOpacity>
           </View>
-
-          <View style={styles.content}>
-            <Text style={styles.title}>Welcome Back</Text>
-            <Text style={styles.subtitle}>Sign in to continue</Text>
-
-            <View style={styles.testCredentialsBox}>
-              <MaterialCommunityIcons name="test-tube" size={20} color="#6C63FF" />
-              <Text style={styles.testCredentialsText}>Test credentials pre-filled for development</Text>
-            </View>
-
-            <View style={styles.form}>
-              <Controller
-                control={control}
-                name="email"
-                rules={{
-                  required: 'Email is required',
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Invalid email address',
-                  },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    label="Email"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    mode="outlined"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    error={!!errors.email}
-                    style={styles.input}
-                  />
-                )}
-              />
-              <HelperText type="error" visible={!!errors.email}>
-                {errors.email?.message}
-              </HelperText>
-
-              <Controller
-                control={control}
-                name="password"
-                rules={{
-                  required: 'Password is required',
-                  minLength: {
-                    value: 6,
-                    message: 'Password must be at least 6 characters',
-                  },
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    label="Password"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    mode="outlined"
-                    secureTextEntry={!showPassword}
-                    error={!!errors.password}
-                    style={styles.input}
-                    right={
-                      <TextInput.Icon
-                        icon={showPassword ? 'eye-off' : 'eye'}
-                        onPress={() => setShowPassword(!showPassword)}
-                      />
-                    }
-                  />
-                )}
-              />
-              <HelperText type="error" visible={!!errors.password}>
-                {errors.password?.message}
-              </HelperText>
-
-              <Button
-                mode="contained"
-                onPress={handleSubmit(onSubmit)}
-                loading={isLoading}
-                disabled={isLoading || isTestLoading}
-                style={styles.button}
-                contentStyle={styles.buttonContent}
-              >
-                Sign In
-              </Button>
-
-              <Button
-                mode="outlined"
-                onPress={handleTestSignIn}
-                loading={isTestLoading}
-                disabled={isLoading || isTestLoading}
-                style={styles.testButton}
-                contentStyle={styles.buttonContent}
-                icon="test-tube"
-              >
-                Test Sign In (Mock Data)
-              </Button>
-
-              <View style={styles.footer}>
-                <Text style={styles.footerText}>Don't have an account? </Text>
-                <Text
-                  style={styles.link}
-                  onPress={() => navigation.navigate('Register')}
-                >
-                  Sign Up
-                </Text>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
-  keyboardView: {
+  safeArea: {
     flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
   },
   content: {
     flex: 1,
+    justifyContent: 'center',
     paddingHorizontal: 24,
-    paddingTop: 32,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 48,
   },
   title: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: 'bold',
-    color: '#1A1A1A',
-    marginBottom: 8,
+    color: '#FFFFFF',
+    marginTop: 16,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 32,
+    fontSize: 18,
+    color: 'rgba(255, 255, 255, 0.8)',
+    marginTop: 8,
   },
   form: {
-    marginTop: 16,
+    gap: 16,
   },
   input: {
-    marginBottom: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   button: {
-    marginTop: 24,
-    marginBottom: 16,
-  },
-  testButton: {
-    marginBottom: 16,
-    borderColor: '#6C63FF',
-  },
-  buttonContent: {
+    marginTop: 8,
     paddingVertical: 8,
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+  switchButton: {
+    alignItems: 'center',
     marginTop: 16,
   },
-  footerText: {
-    color: '#666',
-    fontSize: 14,
+  switchText: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 16,
   },
-  link: {
-    color: '#6C63FF',
-    fontSize: 14,
-    fontWeight: 'bold',
+  testButton: {
+    marginTop: 32,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 24,
+    alignSelf: 'center',
   },
-  testCredentialsBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F0EFFF',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#6C63FF20',
-  },
-  testCredentialsText: {
-    marginLeft: 8,
-    color: '#6C63FF',
+  testButtonText: {
+    color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
   },
 });
 

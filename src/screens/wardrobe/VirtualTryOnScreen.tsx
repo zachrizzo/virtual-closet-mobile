@@ -11,8 +11,8 @@ import { Image } from 'expo-image';
 import Slider from '@react-native-community/slider';
 
 import { WardrobeStackParamList } from '@/navigation/TabNavigator';
-import { useGetClothingItemQuery, useGenerateVirtualTryOnMutation, useGetClothingQuery } from '@/store/api/clothingApi';
-import { useGetUserPhotosQuery } from '@/store/api/userApi';
+import { unifiedAPI } from '@/services/api/unifiedService';
+import { ClothingItem } from '@/types/clothing';
 
 type VirtualTryOnScreenNavigationProp = StackNavigationProp<WardrobeStackParamList, 'VirtualTryOn'>;
 type VirtualTryOnScreenRouteProp = RouteProp<WardrobeStackParamList, 'VirtualTryOn'>;
@@ -35,31 +35,30 @@ const VirtualTryOnScreen: React.FC<Props> = ({ navigation, route }) => {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
   
-  const { data: allClothing = [] } = useGetClothingQuery({});
-  const { data: clothingItem } = useGetClothingItemQuery(selectedItemId || '', {
-    skip: !selectedItemId
-  });
-  const { data: userPhotos = [] } = useGetUserPhotosQuery();
-  const [generateTryOn, { isLoading: isGenerating }] = useGenerateVirtualTryOnMutation();
+  const [allClothing, setAllClothing] = useState<ClothingItem[]>([]);
+  const [clothingItem, setClothingItem] = useState<ClothingItem | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
   
-  // Debug logging
+  // Load clothing items
   React.useEffect(() => {
-    console.log('VirtualTryOnScreen - selectedItemId:', selectedItemId);
-    console.log('VirtualTryOnScreen - clothingItem:', clothingItem);
-    if (clothingItem) {
-      console.log('VirtualTryOnScreen - images:', clothingItem.images);
-    }
-  }, [selectedItemId, clothingItem]);
-  
-  // If userPhotoId provided, use that photo
+    loadClothingItems();
+  }, []);
+
   React.useEffect(() => {
-    if (userPhotoId && userPhotos.length > 0) {
-      const photo = userPhotos.find(p => p.id === userPhotoId);
-      if (photo) {
-        setUserPhoto(photo.imageUrl);
-      }
+    if (selectedItemId && allClothing.length > 0) {
+      const item = allClothing.find(c => c.id === selectedItemId);
+      setClothingItem(item || null);
     }
-  }, [userPhotoId, userPhotos]);
+  }, [selectedItemId, allClothing]);
+
+  const loadClothingItems = async () => {
+    try {
+      const items = await unifiedAPI.wardrobe.getItems();
+      setAllClothing(items);
+    } catch (error) {
+      console.error('Error loading clothing:', error);
+    }
+  };
 
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -156,24 +155,33 @@ const VirtualTryOnScreen: React.FC<Props> = ({ navigation, route }) => {
         console.error('User photo not accessible:', err);
       }
       
-      const result = await generateTryOn({
-        userImageUri: userPhoto,
-        clothingItemId: selectedItemId!,
-      }).unwrap();
+      setIsGenerating(true);
+      
+      // Convert image to base64
+      const response = await fetch(userPhoto);
+      const blob = await response.blob();
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+      
+      const result = await unifiedAPI.virtualTryOn.tryOn(selectedItemId!, base64);
 
       console.log('Virtual try-on SUCCESS:', result);
-      console.log('Generated image URL:', result.generatedImageUrl);
+      console.log('Generated image URL:', result.result_image_url);
       
       // Validate the generated image URL
-      if (!result.generatedImageUrl) {
+      if (!result.result_image_url) {
         throw new Error('No generated image URL in result');
       }
       
-      setGeneratedImage(result.generatedImageUrl);
+      setGeneratedImage(result.result_image_url);
+      setIsGenerating(false);
       
       // Try to prefetch the image to check if it's accessible
       try {
-        const imageCheck = await fetch(result.generatedImageUrl, { method: 'HEAD' });
+        const imageCheck = await fetch(result.result_image_url, { method: 'HEAD' });
         console.log('Generated image accessibility check:', imageCheck.status);
       } catch (err) {
         console.warn('Generated image may not be accessible:', err);
@@ -182,6 +190,7 @@ const VirtualTryOnScreen: React.FC<Props> = ({ navigation, route }) => {
       console.error('=== VIRTUAL TRY-ON ERROR ===');
       console.error('Error details:', error);
       Alert.alert('Error', 'Failed to generate virtual try-on. Please try again.');
+      setIsGenerating(false);
     }
   };
 
@@ -286,39 +295,6 @@ const VirtualTryOnScreen: React.FC<Props> = ({ navigation, route }) => {
               Take a photo of yourself or choose from your saved photos
             </Text>
             
-            {/* Saved Photos Section */}
-            {userPhotos.length > 0 && (
-              <View style={styles.savedPhotosSection}>
-                <Text style={styles.sectionTitle}>Your Saved Photos</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {userPhotos.map(photo => (
-                    <TouchableOpacity
-                      key={photo.id}
-                      onPress={() => setUserPhoto(photo.imageUrl)}
-                      style={styles.savedPhotoItem}
-                    >
-                      <Image
-                        source={{ uri: photo.imageUrl }}
-                        style={styles.savedPhotoImage}
-                        contentFit="cover"
-                      />
-                      {photo.isDefault && (
-                        <View style={styles.defaultBadge}>
-                          <MaterialCommunityIcons name="star" size={12} color="#fff" />
-                        </View>
-                      )}
-                    </TouchableOpacity>
-                  ))}
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate('UserPhotos' as any)}
-                    style={[styles.savedPhotoItem, styles.managePhotosButton]}
-                  >
-                    <MaterialCommunityIcons name="cog" size={24} color="#666" />
-                    <Text style={styles.managePhotosText}>Manage</Text>
-                  </TouchableOpacity>
-                </ScrollView>
-              </View>
-            )}
             
             <View style={styles.cameraContainer}>
               <CameraView

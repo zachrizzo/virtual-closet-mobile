@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert, TouchableOpacity, StatusBar, Platform, Animated } from 'react-native';
 import { Text, TextInput, Button, SegmentedButtons, Chip, HelperText, IconButton } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -8,10 +8,11 @@ import { Image } from 'expo-image';
 import { useForm, Controller } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { WardrobeStackParamList } from '@/navigation/TabNavigator';
-import { ClothingCategory, Season, Occasion } from '@/types/clothing';
-import { useCreateClothingMutation, useUploadClothingImageMutation } from '@/store/api/clothingApi';
+import { ClothingCategory } from '@/types/clothing';
+import { unifiedAPI } from '@/services/api/unifiedService';
 
 type AddClothingScreenNavigationProp = StackNavigationProp<WardrobeStackParamList, 'AddClothing'>;
 type AddClothingScreenRouteProp = RouteProp<WardrobeStackParamList, 'AddClothing'>;
@@ -23,64 +24,47 @@ interface Props {
 
 interface ClothingForm {
   name: string;
-  primaryColor: string;
+  category: ClothingCategory;
 }
+
+const categoryData = [
+  { value: ClothingCategory.TOPS, label: 'Tops', icon: 'tshirt-crew', color: '#FF6B6B' },
+  { value: ClothingCategory.BOTTOMS, label: 'Bottoms', icon: 'human-male', color: '#4ECDC4' },
+  { value: ClothingCategory.DRESSES, label: 'Dresses', icon: 'human-female', color: '#FF8CC8' },
+  { value: ClothingCategory.OUTERWEAR, label: 'Outerwear', icon: 'coat-rack', color: '#95E1D3' },
+  { value: ClothingCategory.SHOES, label: 'Shoes', icon: 'shoe-heel', color: '#FFA502' },
+  { value: ClothingCategory.ACCESSORIES, label: 'Accessories', icon: 'glasses', color: '#A29BFE' },
+];
 
 const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
   const initialPhotoUri = route.params?.photoUri;
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(initialPhotoUri || null);
-  
-  const [category, setCategory] = useState<ClothingCategory>(ClothingCategory.TOPS);
-  const [selectedSeasons, setSelectedSeasons] = useState<Season[]>([]);
-  const [selectedOccasions, setSelectedOccasions] = useState<Occasion[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState('');
-  
-  const [createClothing, { isLoading: isCreating }] = useCreateClothingMutation();
-  const [uploadImage, { isLoading: isUploading }] = useUploadClothingImageMutation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [fadeAnim] = useState(new Animated.Value(0));
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<ClothingForm>({
     defaultValues: {
       name: '',
-      primaryColor: '',
+      category: ClothingCategory.TOPS,
     },
   });
 
-  const toggleSeason = (season: Season) => {
-    setSelectedSeasons(current =>
-      current.includes(season)
-        ? current.filter(s => s !== season)
-        : [...current, season]
-    );
-  };
+  const selectedCategory = watch('category');
 
-  const toggleOccasion = (occasion: Occasion) => {
-    setSelectedOccasions(current =>
-      current.includes(occasion)
-        ? current.filter(o => o !== occasion)
-        : [...current, occasion]
-    );
-  };
-
-  const addTag = () => {
-    if (newTag.trim() && !tags.includes(newTag.trim())) {
-      setTags([...tags, newTag.trim()]);
-      setNewTag('');
-    }
-  };
-
-  const removeTag = (tag: string) => {
-    setTags(tags.filter(t => t !== tag));
-  };
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   const pickImage = async () => {
-    console.log('pickImage called');
-    
-    // Request permissions first
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permission Denied', 'Gallery permission is required to select photos');
@@ -94,8 +78,6 @@ const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
         aspect: [3, 4],
         quality: 0.9,
       });
-
-      console.log('Image picker result:', result);
       
       if (!result.canceled && result.assets && result.assets.length > 0) {
         setSelectedPhoto(result.assets[0].uri);
@@ -132,264 +114,449 @@ const AddClothingScreen: React.FC<Props> = ({ navigation, route }) => {
         return;
       }
 
-      // Create clothing item
-      const result = await createClothing({
-        name: data.name,
-        category,
-        brand: 'Generic', // Default brand
-        size: 'M', // Default size
-        color: {
-          primary: data.primaryColor,
-        },
-        season: selectedSeasons.length > 0 ? selectedSeasons : ['spring'], // Default season
-        occasion: selectedOccasions.length > 0 ? selectedOccasions : ['casual'], // Default occasion
-        tags: tags.length > 0 ? tags : [],
-        notes: '',
-      }).unwrap();
+      setIsSubmitting(true);
 
-      // Upload image
-      if (result.id && selectedPhoto) {
-        const formData = new FormData();
-        formData.append('file', {
+      const item = await unifiedAPI.wardrobe.addItem(data.name, data.category);
+      
+      if (item && selectedPhoto) {
+        const imageData = {
           uri: selectedPhoto,
           type: 'image/jpeg',
-          name: 'clothing.jpg',
-        } as any);
-
-        await uploadImage({
-          id: result.id,
-          image: formData,
-        }).unwrap();
+          name: 'photo.jpg',
+        };
+        await unifiedAPI.wardrobe.uploadImage(item.id, imageData);
       }
 
       Alert.alert('Success', 'Clothing item added successfully!', [
         { text: 'OK', onPress: () => navigation.goBack() },
       ]);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding clothing:', error);
-      Alert.alert('Error', 'Failed to add clothing item');
+      const errorMessage = error.response?.data?.detail || error.message || 'Failed to add clothing item';
+      Alert.alert('Error', errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['bottom']}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.imageContainer}>
-          {selectedPhoto ? (
-            <>
-              <Image source={{ uri: selectedPhoto }} style={styles.image} contentFit="cover" />
-              <IconButton
-                icon="close"
-                size={24}
-                onPress={() => setSelectedPhoto(null)}
-                style={styles.removePhotoButton}
-                iconColor="#fff"
-              />
-            </>
-          ) : (
-            <View style={styles.photoPlaceholder}>
-              <MaterialCommunityIcons name="camera-plus" size={48} color="#666" />
-              <Text style={styles.photoPlaceholderText}>Add Photo</Text>
-              <View style={styles.photoButtons}>
-                <Button mode="contained" onPress={takePhoto} style={styles.photoButton}>
-                  Take Photo
-                </Button>
-                <Button mode="outlined" onPress={pickImage} style={styles.photoButton}>
-                  Choose from Gallery
-                </Button>
+    <View style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
+          {/* Photo Section */}
+          <View style={styles.photoSection}>
+            {selectedPhoto ? (
+              <View style={styles.selectedPhotoContainer}>
+                <Image source={{ uri: selectedPhoto }} style={styles.selectedPhoto} contentFit="cover" />
+                <LinearGradient
+                  colors={['transparent', 'rgba(0,0,0,0.5)']}
+                  style={styles.photoGradient}
+                />
+                <TouchableOpacity
+                  style={styles.changePhotoButton}
+                  onPress={() => setSelectedPhoto(null)}
+                >
+                  <MaterialCommunityIcons name="camera-retake" size={20} color="#FFFFFF" />
+                  <Text style={styles.changePhotoText}>Change Photo</Text>
+                </TouchableOpacity>
               </View>
-            </View>
-          )}
-        </View>
-
-        <View style={styles.form}>
-          <Text style={styles.formTitle}>Add Clothing Item</Text>
-          <Text style={styles.formSubtitle}>Just add a photo and basic details!</Text>
-          
-          <Controller
-            control={control}
-            name="name"
-            rules={{ required: 'Item name is required' }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                label="What is this item? *"
-                placeholder="e.g., Blue Jeans, White T-Shirt, Red Dress"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                mode="outlined"
-                error={!!errors.name}
-                style={styles.input}
-              />
+            ) : (
+              <View style={styles.photoUploadContainer}>
+                <LinearGradient
+                  colors={['#F0F0F5', '#E8E8ED']}
+                  style={styles.photoUploadGradient}
+                >
+                  <MaterialCommunityIcons name="hanger" size={64} color="#B2BEC3" />
+                  <Text style={styles.uploadTitle}>Add Your Item</Text>
+                  <Text style={styles.uploadSubtitle}>Upload a photo to get started</Text>
+                  
+                  <View style={styles.uploadButtons}>
+                    <TouchableOpacity style={styles.uploadButton} onPress={takePhoto}>
+                      <LinearGradient
+                        colors={['#6C63FF', '#8B87FF']}
+                        style={styles.uploadButtonGradient}
+                      >
+                        <MaterialCommunityIcons name="camera" size={24} color="#FFFFFF" />
+                        <Text style={styles.uploadButtonText}>Take Photo</Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                    
+                    <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+                      <View style={styles.uploadButtonOutline}>
+                        <MaterialCommunityIcons name="image-multiple" size={24} color="#6C63FF" />
+                        <Text style={styles.uploadButtonTextOutline}>Choose from Gallery</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </LinearGradient>
+              </View>
             )}
-          />
-          <HelperText type="error" visible={!!errors.name}>
-            {errors.name?.message}
-          </HelperText>
-
-          <Text style={styles.sectionTitle}>Category *</Text>
-          <SegmentedButtons
-            value={category}
-            onValueChange={(value) => setCategory(value as ClothingCategory)}
-            buttons={[
-              { value: ClothingCategory.TOPS, label: 'Tops' },
-              { value: ClothingCategory.BOTTOMS, label: 'Bottoms' },
-              { value: ClothingCategory.DRESSES, label: 'Dresses' },
-              { value: ClothingCategory.OUTERWEAR, label: 'Outerwear' },
-            ]}
-            style={styles.segmentedButtons}
-          />
-
-          <Controller
-            control={control}
-            name="primaryColor"
-            rules={{ required: 'Color is required' }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                label="Main Color *"
-                placeholder="e.g., Blue, Red, Black, Multi-color"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                mode="outlined"
-                error={!!errors.primaryColor}
-                style={styles.input}
-              />
-            )}
-          />
-          <HelperText type="error" visible={!!errors.primaryColor}>
-            {errors.primaryColor?.message}
-          </HelperText>
-
-
-          <View style={styles.buttonContainer}>
-            <Button
-              mode="outlined"
-              onPress={() => navigation.goBack()}
-              style={styles.button}
-            >
-              Cancel
-            </Button>
-            <Button
-              mode="contained"
-              onPress={handleSubmit(onSubmit)}
-              loading={isCreating || isUploading}
-              disabled={isCreating || isUploading}
-              style={styles.button}
-            >
-              Add to Wardrobe
-            </Button>
           </View>
-        </View>
+
+          {/* Form Section */}
+          <View style={styles.formSection}>
+            <View style={styles.formHeader}>
+              <Text style={styles.formTitle}>Item Details</Text>
+              <Text style={styles.formSubtitle}>Tell us about your new item</Text>
+            </View>
+
+            <Controller
+              control={control}
+              name="name"
+              rules={{ required: 'Please name your item' }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputLabel}>Item Name</Text>
+                  <TextInput
+                    placeholder="e.g., Vintage Denim Jacket"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    mode="outlined"
+                    error={!!errors.name}
+                    style={styles.input}
+                    outlineColor="#E0E0E0"
+                    activeOutlineColor="#6C63FF"
+                    outlineStyle={{ borderRadius: 12 }}
+                  />
+                  {errors.name && (
+                    <Text style={styles.errorText}>{errors.name.message}</Text>
+                  )}
+                </View>
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="category"
+              render={({ field: { onChange, value } }) => (
+                <View style={styles.categoryContainer}>
+                  <Text style={styles.inputLabel}>Category</Text>
+                  <View style={styles.categoryGrid}>
+                    {categoryData.map((category) => (
+                      <TouchableOpacity
+                        key={category.value}
+                        style={[
+                          styles.categoryCard,
+                          value === category.value && styles.categoryCardSelected
+                        ]}
+                        onPress={() => onChange(category.value)}
+                      >
+                        <View style={[
+                          styles.categoryIconContainer,
+                          value === category.value && { backgroundColor: category.color }
+                        ]}>
+                          <MaterialCommunityIcons 
+                            name={category.icon as any} 
+                            size={24} 
+                            color={value === category.value ? '#FFFFFF' : category.color} 
+                          />
+                        </View>
+                        <Text style={[
+                          styles.categoryLabel,
+                          value === category.value && styles.categoryLabelSelected
+                        ]}>
+                          {category.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              )}
+            />
+
+            {/* Quick Tips */}
+            <View style={styles.tipsContainer}>
+              <MaterialCommunityIcons name="lightbulb-outline" size={20} color="#FFA502" />
+              <Text style={styles.tipText}>
+                Tip: Good lighting and a clean background make your items look their best!
+              </Text>
+            </View>
+          </View>
+        </Animated.View>
       </ScrollView>
-    </SafeAreaView>
+
+      {/* Bottom Action Buttons */}
+      <View style={styles.bottomActions}>
+        <TouchableOpacity 
+          style={styles.cancelButton} 
+          onPress={() => navigation.goBack()}
+          disabled={isSubmitting}
+        >
+          <Text style={styles.cancelButtonText}>Cancel</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={[styles.saveButton, isSubmitting && styles.saveButtonDisabled]} 
+          onPress={handleSubmit(onSubmit)}
+          disabled={isSubmitting}
+        >
+          <LinearGradient
+            colors={isSubmitting ? ['#B2BEC3', '#B2BEC3'] : ['#6C63FF', '#8B87FF']}
+            style={styles.saveButtonGradient}
+          >
+            {isSubmitting ? (
+              <>
+                <MaterialCommunityIcons name="loading" size={20} color="#FFFFFF" />
+                <Text style={styles.saveButtonText}>Adding...</Text>
+              </>
+            ) : (
+              <>
+                <MaterialCommunityIcons name="plus" size={20} color="#FFFFFF" />
+                <Text style={styles.saveButtonText}>Add to Closet</Text>
+              </>
+            )}
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F6FA',
   },
   scrollContent: {
-    paddingBottom: 24,
+    paddingBottom: 100,
   },
-  imageContainer: {
-    height: 300,
-    backgroundColor: '#f0f0f0',
+  content: {
+    flex: 1,
+  },
+  photoSection: {
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    marginBottom: 20,
+  },
+  selectedPhotoContainer: {
+    height: 400,
     position: 'relative',
   },
-  image: {
+  selectedPhoto: {
     width: '100%',
     height: '100%',
   },
-  removePhotoButton: {
+  photoGradient: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 20,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 100,
   },
-  photoPlaceholder: {
+  changePhotoButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    gap: 8,
+  },
+  changePhotoText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  photoUploadContainer: {
+    height: 350,
+  },
+  photoUploadGradient: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: 32,
   },
-  photoPlaceholderText: {
-    fontSize: 18,
-    color: '#666',
-    marginTop: 12,
-    marginBottom: 24,
-  },
-  photoButtons: {
-    width: '100%',
-    gap: 12,
-  },
-  photoButton: {
-    marginVertical: 6,
-  },
-  form: {
-    padding: 16,
-  },
-  formTitle: {
+  uploadTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  formSubtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 24,
-    textAlign: 'center',
-  },
-  input: {
-    marginBottom: 8,
-  },
-  sectionTitle: {
-    fontSize: 16,
     fontWeight: '600',
+    color: '#2D3436',
     marginTop: 16,
-    marginBottom: 8,
   },
-  segmentedButtons: {
-    marginBottom: 16,
+  uploadSubtitle: {
+    fontSize: 16,
+    color: '#636E72',
+    marginTop: 8,
+    marginBottom: 32,
   },
-  row: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 8,
+  uploadButtons: {
+    width: '100%',
+    gap: 16,
   },
-  halfField: {
-    flex: 1,
+  uploadButton: {
+    width: '100%',
   },
-  chipContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 16,
-  },
-  chip: {
-    marginBottom: 4,
-  },
-  tagInputContainer: {
+  uploadButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 12,
+    gap: 8,
+  },
+  uploadButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  uploadButtonOutline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#6C63FF',
+    gap: 8,
+  },
+  uploadButtonTextOutline: {
+    color: '#6C63FF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  formSection: {
+    padding: 20,
+  },
+  formHeader: {
+    marginBottom: 24,
+  },
+  formTitle: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#2D3436',
+  },
+  formSubtitle: {
+    fontSize: 14,
+    color: '#636E72',
+    marginTop: 4,
+  },
+  inputContainer: {
+    marginBottom: 24,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#2D3436',
     marginBottom: 8,
   },
-  tagInput: {
-    flex: 1,
-    marginRight: 8,
+  input: {
+    backgroundColor: '#FFFFFF',
+    fontSize: 16,
   },
-  buttonContainer: {
+  errorText: {
+    color: '#FF6B6B',
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
+  },
+  categoryContainer: {
+    marginBottom: 24,
+  },
+  categoryGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 12,
-    marginTop: 24,
   },
-  button: {
+  categoryCard: {
+    width: '30%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#F0F0F5',
+  },
+  categoryCardSelected: {
+    borderColor: '#6C63FF',
+  },
+  categoryIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#F0F0F5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  categoryLabel: {
+    fontSize: 12,
+    color: '#636E72',
+    fontWeight: '500',
+  },
+  categoryLabelSelected: {
+    color: '#6C63FF',
+    fontWeight: '600',
+  },
+  tipsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF8E1',
+    padding: 16,
+    borderRadius: 12,
+    gap: 12,
+  },
+  tipText: {
     flex: 1,
+    fontSize: 14,
+    color: '#F57C00',
+    lineHeight: 20,
+  },
+  bottomActions: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    padding: 20,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 20,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F5',
+    gap: 12,
+  },
+  cancelButton: {
+    flex: 1,
+    paddingVertical: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#E0E0E0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#636E72',
+  },
+  saveButton: {
+    flex: 2,
+  },
+  saveButtonDisabled: {
+    opacity: 0.6,
+  },
+  saveButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 12,
+    gap: 8,
+  },
+  saveButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

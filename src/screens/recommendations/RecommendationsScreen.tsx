@@ -8,18 +8,10 @@ import { useNavigation } from '@react-navigation/native';
 
 import { useGetRecommendationsQuery } from '@/store/api/recommendationApi';
 import { Occasion } from '@/types/clothing';
-import { WeatherCondition } from '@/types/outfit';
+import { WeatherCondition, OutfitRecommendation } from '@/types/outfit';
 
-interface Recommendation {
-  id: string;
-  outfitId?: string;
-  itemIds: string[];
-  items?: any[];
-  score: number;
-  reason: string;
-  stylingTips?: string[];
-  alternatives?: any[];
-}
+// Use the enhanced OutfitRecommendation type
+type Recommendation = OutfitRecommendation;
 
 const RecommendationsScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -205,17 +197,17 @@ const RecommendationsScreen: React.FC = () => {
                   </View>
                   
                   <View style={styles.itemsContainer}>
-                    {rec.items?.slice(0, 3).map((item) => (
+                    {rec.outfit?.items?.slice(0, 3).map((outfitItem) => (
                       <Image
-                        key={item.id}
-                        source={{ uri: item.images.thumbnail || item.images.original }}
+                        key={outfitItem.itemId}
+                        source={{ uri: outfitItem.item?.images.thumbnail || outfitItem.item?.images.original }}
                         style={styles.itemImage}
                         contentFit="cover"
                       />
                     ))}
-                    {rec.items && rec.items.length > 3 && (
+                    {rec.outfit?.items && rec.outfit.items.length > 3 && (
                       <View style={styles.moreItems}>
-                        <Text style={styles.moreItemsText}>+{rec.items.length - 3}</Text>
+                        <Text style={styles.moreItemsText}>+{rec.outfit.items.length - 3}</Text>
                       </View>
                     )}
                   </View>
@@ -223,23 +215,13 @@ const RecommendationsScreen: React.FC = () => {
                   <Card.Content>
                     <Text style={styles.reason}>{rec.reason}</Text>
                     
-                    {rec.stylingTips && rec.stylingTips.length > 0 && (
-                      <View style={styles.tipsContainer}>
-                        <Text style={styles.tipsTitle}>Styling Tips:</Text>
-                        {rec.stylingTips.map((tip, tipIndex) => (
-                          <View key={tipIndex} style={styles.tip}>
-                            <MaterialCommunityIcons name="lightbulb-outline" size={14} color="#666" />
-                            <Text style={styles.tipText}>{tip}</Text>
-                          </View>
-                        ))}
-                      </View>
-                    )}
+                    {/* Styling tips section removed as per new OutfitRecommendation structure */}
                   </Card.Content>
                   
                   <Card.Actions>
                     <Button 
                       mode="outlined" 
-                      onPress={() => handleVirtualTryOn(suggestion)}
+                      onPress={() => handleVirtualTryOn(rec)}
                       icon="auto-fix"
                       compact
                     >
@@ -247,7 +229,7 @@ const RecommendationsScreen: React.FC = () => {
                     </Button>
                     <Button 
                       mode="contained" 
-                      onPress={() => handleSaveOutfit(suggestion)}
+                      onPress={() => handleSaveOutfit(rec)}
                       icon="heart-outline"
                       compact
                     >

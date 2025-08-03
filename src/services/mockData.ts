@@ -1,5 +1,5 @@
-import { ClothingItem, ClothingCategory, Season, Occasion } from '@/types/clothing';
-import { Outfit, WeatherCondition } from '@/types/outfit';
+import { ClothingItem, ClothingCategory, Season, Occasion, ItemCondition, ColorFamily, Visibility } from '@/types/clothing';
+import { Outfit, WeatherCondition, ItemRole, OutfitItem } from '@/types/outfit';
 
 // Mock clothing items
 export const mockClothingItems: ClothingItem[] = [
@@ -11,7 +11,11 @@ export const mockClothingItems: ClothingItem[] = [
     subcategory: 'blazer',
     brand: 'Zara',
     color: {
-      primary: 'Black',
+      primary: {
+        name: 'Black',
+        hex: '#000000',
+        family: ColorFamily.BLACK
+      }
     },
     season: [Season.FALL, Season.WINTER, Season.SPRING],
     occasion: [Occasion.WORK, Occasion.FORMAL],
@@ -23,9 +27,17 @@ export const mockClothingItems: ClothingItem[] = [
       processed: 'https://via.placeholder.com/400x600/000000/FFFFFF?text=Black+Blazer',
       thumbnail: 'https://via.placeholder.com/200x300/000000/FFFFFF?text=Black+Blazer',
     },
+    condition: ItemCondition.EXCELLENT,
+    materials: ['Wool Blend', 'Polyester'],
+    careInstructions: ['Dry clean only'],
+    retailValue: 120,
+    currentValue: 95,
     tags: ['favorite', 'versatile'],
+    notes: 'Perfect for professional settings',
     wearCount: 15,
     lastWorn: new Date('2024-07-20'),
+    visibility: Visibility.FRIENDS,
+    allowSharing: true,
     isActive: true,
     isFavorite: true,
     createdAt: new Date('2024-01-15'),
@@ -39,7 +51,11 @@ export const mockClothingItems: ClothingItem[] = [
     subcategory: 'shirt',
     brand: 'Uniqlo',
     color: {
-      primary: 'White',
+      primary: {
+        name: 'White',
+        hex: '#FFFFFF', 
+        family: ColorFamily.WHITE
+      }
     },
     season: [Season.ALL_SEASON],
     occasion: [Occasion.WORK, Occasion.CASUAL],
@@ -51,9 +67,17 @@ export const mockClothingItems: ClothingItem[] = [
       processed: 'https://via.placeholder.com/400x600/FFFFFF/000000?text=White+Shirt',
       thumbnail: 'https://via.placeholder.com/200x300/FFFFFF/000000?text=White+Shirt',
     },
+    condition: ItemCondition.GOOD,
+    materials: ['100% Cotton'],
+    careInstructions: ['Machine wash cold', 'Tumble dry low'],
+    retailValue: 40,
+    currentValue: 32,
     tags: ['basic', 'essential'],
+    notes: 'Versatile wardrobe staple',
     wearCount: 25,
     lastWorn: new Date('2024-07-25'),
+    visibility: Visibility.PRIVATE,
+    allowSharing: true,
     isActive: true,
     isFavorite: true,
     createdAt: new Date('2024-02-01'),
@@ -67,7 +91,11 @@ export const mockClothingItems: ClothingItem[] = [
     subcategory: 'skirt',
     brand: 'H&M',
     color: {
-      primary: 'Navy',
+      primary: {
+        name: 'Navy Blue',
+        hex: '#000080',
+        family: ColorFamily.BLUE
+      }
     },
     season: [Season.ALL_SEASON],
     occasion: [Occasion.WORK, Occasion.FORMAL],
@@ -79,9 +107,17 @@ export const mockClothingItems: ClothingItem[] = [
       processed: 'https://via.placeholder.com/400x600/000080/FFFFFF?text=Navy+Skirt',
       thumbnail: 'https://via.placeholder.com/200x300/000080/FFFFFF?text=Navy+Skirt',
     },
+    condition: ItemCondition.EXCELLENT,
+    materials: ['Polyester', 'Spandex'],
+    careInstructions: ['Machine wash cold', 'Hang dry'],
+    retailValue: 35,
+    currentValue: 28,
     tags: ['professional'],
+    notes: 'Great for work outfits',
     wearCount: 18,
     lastWorn: new Date('2024-07-22'),
+    visibility: Visibility.FRIENDS,
+    allowSharing: true,
     isActive: true,
     isFavorite: false,
     createdAt: new Date('2024-03-10'),
@@ -95,8 +131,23 @@ export const mockClothingItems: ClothingItem[] = [
     subcategory: 'casual_dress',
     brand: 'Zara',
     color: {
-      primary: 'Pink',
-      secondary: ['White', 'Green'],
+      primary: {
+        name: 'Pink',
+        hex: '#FFC0CB',
+        family: ColorFamily.PINK
+      },
+      secondary: [
+        {
+          name: 'White',
+          hex: '#FFFFFF',
+          family: ColorFamily.WHITE
+        },
+        {
+          name: 'Green',
+          hex: '#008000',
+          family: ColorFamily.GREEN
+        }
+      ]
     },
     season: [Season.SUMMER, Season.SPRING],
     occasion: [Occasion.CASUAL, Occasion.DATE, Occasion.VACATION],
@@ -108,9 +159,17 @@ export const mockClothingItems: ClothingItem[] = [
       processed: 'https://via.placeholder.com/400x600/FFC0CB/000000?text=Floral+Dress',
       thumbnail: 'https://via.placeholder.com/200x300/FFC0CB/000000?text=Floral+Dress',
     },
+    condition: ItemCondition.EXCELLENT,
+    materials: ['Chiffon', 'Polyester Lining'],
+    careInstructions: ['Hand wash cold', 'Hang dry'],
+    retailValue: 65,
+    currentValue: 52,
     tags: ['summer', 'romantic'],
+    notes: 'Perfect for summer events',
     wearCount: 8,
     lastWorn: new Date('2024-07-15'),
+    visibility: Visibility.PUBLIC,
+    allowSharing: true,
     isActive: true,
     isFavorite: false,
     createdAt: new Date('2024-04-20'),
@@ -124,7 +183,11 @@ export const mockClothingItems: ClothingItem[] = [
     subcategory: 'heels',
     brand: 'Nine West',
     color: {
-      primary: 'Black',
+      primary: {
+        name: 'Black',
+        hex: '#000000',
+        family: ColorFamily.BLACK
+      }
     },
     season: [Season.ALL_SEASON],
     occasion: [Occasion.WORK, Occasion.FORMAL, Occasion.PARTY],
@@ -136,9 +199,17 @@ export const mockClothingItems: ClothingItem[] = [
       processed: 'https://via.placeholder.com/400x600/000000/FFFFFF?text=Black+Pumps',
       thumbnail: 'https://via.placeholder.com/200x300/000000/FFFFFF?text=Black+Pumps',
     },
+    condition: ItemCondition.GOOD,
+    materials: ['Leather', 'Synthetic'],
+    careInstructions: ['Wipe clean with damp cloth'],
+    retailValue: 90,
+    currentValue: 65,
     tags: ['classic', 'heels'],
+    notes: 'Comfortable heels for all-day wear',
     wearCount: 20,
     lastWorn: new Date('2024-07-18'),
+    visibility: Visibility.FRIENDS,
+    allowSharing: true,
     isActive: true,
     isFavorite: true,
     createdAt: new Date('2023-12-01'),
@@ -146,24 +217,53 @@ export const mockClothingItems: ClothingItem[] = [
   },
 ];
 
-// Mock outfits
+// Mock outfits with enhanced structure
 export const mockOutfits: Outfit[] = [
   {
     id: '1',
     userId: '1',
     name: 'Professional Monday',
-    itemIds: ['1', '2', '3', '5'],
-    items: mockClothingItems.filter(item => ['1', '2', '3', '5'].includes(item.id)),
+    items: [
+      {
+        itemId: '1',
+        role: ItemRole.OUTERWEAR,
+        item: mockClothingItems.find(item => item.id === '1')
+      },
+      {
+        itemId: '2',
+        role: ItemRole.TOP,
+        item: mockClothingItems.find(item => item.id === '2')
+      },
+      {
+        itemId: '3',
+        role: ItemRole.BOTTOM,
+        item: mockClothingItems.find(item => item.id === '3')
+      },
+      {
+        itemId: '5',
+        role: ItemRole.SHOES,
+        item: mockClothingItems.find(item => item.id === '5')
+      }
+    ],
     occasion: Occasion.WORK,
     season: Season.FALL,
     weather: WeatherCondition.MILD,
+    tags: ['professional', 'meeting-ready'],
+    inspirationSource: 'User Created',
     rating: 4.5,
     notes: 'Perfect for important meetings',
     image: 'https://via.placeholder.com/400x600/333333/FFFFFF?text=Professional+Outfit',
+    layoutImage: 'https://via.placeholder.com/600x800/333333/FFFFFF?text=Outfit+Layout',
     wearCount: 10,
     lastWorn: new Date('2024-07-22'),
+    plannedWearDate: new Date('2024-08-05'),
+    visibility: Visibility.FRIENDS,
+    allowSharing: true,
+    likes: 8,
+    shares: 2,
     isAIGenerated: false,
     isFavorite: true,
+    isArchived: false,
     createdAt: new Date('2024-05-01'),
     updatedAt: new Date('2024-07-22'),
   },
@@ -171,48 +271,119 @@ export const mockOutfits: Outfit[] = [
     id: '2',
     userId: '1',
     name: 'Summer Brunch',
-    itemIds: ['4'],
-    items: mockClothingItems.filter(item => ['4'].includes(item.id)),
+    items: [
+      {
+        itemId: '4',
+        role: ItemRole.DRESS,
+        item: mockClothingItems.find(item => item.id === '4')
+      }
+    ],
     occasion: Occasion.CASUAL,
     season: Season.SUMMER,
     weather: WeatherCondition.SUNNY,
+    tags: ['casual', 'brunch', 'summer'],
+    inspirationSource: 'AI Generated',
     rating: 5,
     notes: 'Light and comfortable for warm days',
     image: 'https://via.placeholder.com/400x600/FFE4E1/000000?text=Summer+Outfit',
+    layoutImage: 'https://via.placeholder.com/600x800/FFE4E1/000000?text=Summer+Layout',
     wearCount: 5,
     lastWorn: new Date('2024-07-15'),
+    visibility: Visibility.PUBLIC,
+    allowSharing: true,
+    likes: 12,
+    shares: 5,
     isAIGenerated: true,
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date('2024-06-01'),
     updatedAt: new Date('2024-07-15'),
   },
 ];
 
-// Mock recommendations
+// Mock outfit recommendations
 export const mockRecommendations = [
   {
     id: 'rec1',
-    outfitId: null,
-    itemIds: ['1', '2', '3'],
-    items: mockClothingItems.filter(item => ['1', '2', '3'].includes(item.id)),
-    score: 0.92,
+    userId: '1',
+    outfit: {
+      id: 'temp-rec-1',
+      userId: '1',
+      name: 'Work Presentation Look',
+      items: [
+        {
+          itemId: '1',
+          role: ItemRole.OUTERWEAR,
+          item: mockClothingItems.find(item => item.id === '1')
+        },
+        {
+          itemId: '2',
+          role: ItemRole.TOP,
+          item: mockClothingItems.find(item => item.id === '2')
+        },
+        {
+          itemId: '3',
+          role: ItemRole.BOTTOM,
+          item: mockClothingItems.find(item => item.id === '3')
+        }
+      ],
+      occasion: Occasion.WORK,
+      season: Season.FALL,
+      tags: ['professional', 'presentation'],
+      wearCount: 0,
+      visibility: Visibility.PRIVATE,
+      allowSharing: false,
+      isAIGenerated: true,
+      isFavorite: false,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
     reason: 'Perfect for your upcoming work presentation. Classic and professional.',
-    stylingTips: [
-      'Add a statement necklace to elevate the look',
-      'Consider nude pumps to elongate your legs',
-    ],
+    score: 0.92,
+    context: {
+      occasion: Occasion.WORK,
+      weather: WeatherCondition.MILD,
+      season: Season.FALL,
+      event: 'Work Presentation'
+    },
+    createdAt: new Date(),
   },
   {
     id: 'rec2',
-    outfitId: null,
-    itemIds: ['4'],
-    items: mockClothingItems.filter(item => ['4'].includes(item.id)),
-    score: 0.88,
+    userId: '1',
+    outfit: {
+      id: 'temp-rec-2',
+      userId: '1',
+      name: 'Weekend Casual',
+      items: [
+        {
+          itemId: '4',
+          role: ItemRole.DRESS,
+          item: mockClothingItems.find(item => item.id === '4')
+        }
+      ],
+      occasion: Occasion.CASUAL,
+      season: Season.SUMMER,
+      tags: ['weekend', 'casual'],
+      wearCount: 0,
+      visibility: Visibility.PRIVATE,
+      allowSharing: false,
+      isAIGenerated: true,
+      isFavorite: false,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
     reason: 'Great for the sunny weather forecast this weekend.',
-    stylingTips: [
-      'Pair with white sneakers for a casual look',
-      'Add a denim jacket for cooler evenings',
-    ],
+    score: 0.88,
+    context: {
+      occasion: Occasion.CASUAL,
+      weather: WeatherCondition.SUNNY,
+      season: Season.SUMMER,
+      event: 'Weekend Outing'
+    },
+    createdAt: new Date(),
   },
 ];
 
@@ -232,6 +403,14 @@ export const getMockOutfits = (params?: any) => {
   
   if (params?.is_favorite) {
     outfits = outfits.filter(outfit => outfit.isFavorite);
+  }
+  
+  if (params?.occasion) {
+    outfits = outfits.filter(outfit => outfit.occasion === params.occasion);
+  }
+  
+  if (params?.season) {
+    outfits = outfits.filter(outfit => outfit.season === params.season);
   }
   
   return Promise.resolve(outfits);

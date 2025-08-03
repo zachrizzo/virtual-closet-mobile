@@ -8,10 +8,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { WardrobeStackParamList } from '@/navigation/TabNavigator';
-import { useAppSelector } from '@/store';
 import { ClothingItem, ClothingCategory } from '@/types/clothing';
-import { useGetClothingQuery } from '@/store/api/clothingApi';
-import { useGetOutfitsQuery } from '@/store/api/outfitApi';
+import { unifiedAPI } from '@/services/api/unifiedService';
 
 type WardrobeScreenNavigationProp = StackNavigationProp<WardrobeStackParamList, 'WardrobeMain'>;
 
@@ -34,37 +32,33 @@ const WardrobeScreen: React.FC<Props> = ({ navigation }) => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [activeTab, setActiveTab] = useState<'items' | 'outfits'>('items');
   
-  const { data: clothing = [], isLoading, refetch, error } = useGetClothingQuery({
-    category: selectedCategory,
-  });
-  
-  const { data: outfits = [], isLoading: outfitsLoading, refetch: refetchOutfits } = useGetOutfitsQuery({});
+  const [clothing, setClothing] = useState<ClothingItem[]>([]);
+  const [outfits, setOutfits] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Debug logging
+  // Load clothing items
   useEffect(() => {
-    console.log('Wardrobe - Clothing data:', clothing?.length || 0, 'items');
-    console.log('Wardrobe - Loading:', isLoading);
-    console.log('Wardrobe - Error:', error);
-    if (clothing && clothing.length > 0) {
-      console.log('First item:', clothing[0]);
-      console.log('First item images:', clothing[0].images);
-      console.log('Image type check:', {
-        original: typeof clothing[0].images.original,
-        processed: typeof clothing[0].images.processed,
-        thumbnail: typeof clothing[0].images.thumbnail,
-      });
-      console.log('All items:', clothing.map(item => ({ 
-        id: item.id, 
-        name: item.name, 
-        images: item.images,
-        imageTypes: {
-          original: typeof item.images.original,
-          processed: typeof item.images.processed,
-          thumbnail: typeof item.images.thumbnail,
-        }
-      })));
+    loadClothing();
+  }, [selectedCategory]);
+
+  const loadClothing = async () => {
+    try {
+      setIsLoading(true);
+      const items = await unifiedAPI.wardrobe.getItems();
+      setClothing(items);
+    } catch (error) {
+      console.error('Error loading clothing:', error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [clothing, isLoading, error]);
+  };
+
+  const refetch = async () => {
+    setIsRefreshing(true);
+    await loadClothing();
+    setIsRefreshing(false);
+  };
 
   const filteredClothing = clothing.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -73,17 +67,10 @@ const WardrobeScreen: React.FC<Props> = ({ navigation }) => {
   );
 
   const renderClothingItem = ({ item }: { item: ClothingItem }) => {
-    // Debug logging for images
-    console.log('Rendering item:', item.name, 'Images:', {
-      thumbnail: item.images.thumbnail?.substring(0, 50),
-      original: item.images.original?.substring(0, 50),
-      processed: item.images.processed?.substring(0, 50),
-    });
-    
     return (
       <TouchableOpacity
         style={viewMode === 'grid' ? styles.itemContainer : styles.listItemContainer}
-        onPress={() => navigation.navigate('ClothingDetail', { itemId: item.id })}
+        onPress={() => navigation.navigate('VirtualTryOn', { itemId: item.id })}
       >
         <Card style={viewMode === 'grid' ? styles.card : styles.listCard}>
           <View style={viewMode === 'grid' ? styles.cardContent : styles.listCardContent}>
@@ -117,7 +104,7 @@ const WardrobeScreen: React.FC<Props> = ({ navigation }) => {
                 <Text style={styles.statText}>{item.wearCount || 0}</Text>
               </View>
               {item.color?.primary && (
-                <View style={[styles.colorDot, { backgroundColor: item.color.primary }]} />
+                <View style={[styles.colorDot, { backgroundColor: item.color.primary.hex || item.color.primary.name }]} />
               )}
               {viewMode === 'list' && item.size && (
                 <Text style={styles.sizeText}>Size {item.size}</Text>
@@ -154,12 +141,6 @@ const WardrobeScreen: React.FC<Props> = ({ navigation }) => {
             </Text>
           </View>
           <View style={styles.headerActions}>
-            <IconButton
-              icon="robot"
-              size={24}
-              iconColor="#FFFFFF"
-              onPress={() => navigation.navigate('AIChat' as any)}
-            />
             {activeTab === 'items' && (
               <IconButton
                 icon={viewMode === 'grid' ? 'view-list' : 'view-grid'}
@@ -250,12 +231,13 @@ const WardrobeScreen: React.FC<Props> = ({ navigation }) => {
             />
           </View>
 
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false}
-            style={styles.filterContainer}
-            contentContainerStyle={styles.filterContent}
-          >
+          <View style={styles.filterWrapper}>
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              style={styles.filterContainer}
+              contentContainerStyle={styles.filterContent}
+            >
             {categories.map((category) => (
               <TouchableOpacity
                 key={category.label}
@@ -278,7 +260,8 @@ const WardrobeScreen: React.FC<Props> = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
             ))}
-          </ScrollView>
+            </ScrollView>
+          </View>
 
           <FlatList
             data={filteredClothing}
@@ -289,7 +272,7 @@ const WardrobeScreen: React.FC<Props> = ({ navigation }) => {
             contentContainerStyle={styles.listContent}
             refreshControl={
               <RefreshControl 
-                refreshing={isLoading} 
+                refreshing={isRefreshing} 
                 onRefresh={refetch}
                 tintColor="#6C63FF"
               />
@@ -317,9 +300,6 @@ const WardrobeScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.outfitsContainer}>
           <View style={styles.outfitsHeader}>
             <Text style={styles.outfitsTitle}>Your Outfits</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('OutfitsMain')}>
-              <Text style={styles.viewAllText}>View All</Text>
-            </TouchableOpacity>
           </View>
           
           {outfits.length === 0 ? (
@@ -334,7 +314,7 @@ const WardrobeScreen: React.FC<Props> = ({ navigation }) => {
                 <TouchableOpacity
                   key={outfit.id}
                   style={styles.outfitItem}
-                  onPress={() => navigation.navigate('OutfitDetail', { outfitId: outfit.id })}
+                  onPress={() => {/* TODO: Outfit detail */}}
                 >
                   <View style={styles.outfitImagePlaceholder}>
                     <MaterialCommunityIcons name="hanger" size={32} color="#ccc" />
@@ -356,7 +336,7 @@ const WardrobeScreen: React.FC<Props> = ({ navigation }) => {
         style={styles.fab}
         onPress={() => activeTab === 'items' 
           ? navigation.navigate('AddClothing')
-          : navigation.navigate('CreateOutfit')
+          : {}
         }
         color="#FFFFFF"
       />
@@ -457,22 +437,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
   },
-  filterContainer: {
-    maxHeight: 50,
+  filterWrapper: {
+    height: 68,
     marginBottom: 10,
+  },
+  filterContainer: {
+    flex: 1,
   },
   filterContent: {
     paddingHorizontal: 20,
+    paddingVertical: 12,
+    alignItems: 'center',
   },
   categoryChip: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    marginRight: 10,
-    gap: 6,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 24,
+    marginRight: 12,
+    gap: 8,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

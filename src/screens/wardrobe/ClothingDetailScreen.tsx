@@ -156,8 +156,8 @@ const ClothingDetailScreen: React.FC<Props> = ({ navigation, route }) => {
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Color:</Text>
               <View style={styles.colorContainer}>
-                <View style={[styles.colorSwatch, { backgroundColor: item.color.primary }]} />
-                <Text style={styles.detailValue}>{item.color.primary}</Text>
+                <View style={[styles.colorSwatch, { backgroundColor: item.color.primary.hex || item.color.primary.name }]} />
+                <Text style={styles.detailValue}>{item.color.primary.name}</Text>
               </View>
             </View>
             {item.purchaseDate && (

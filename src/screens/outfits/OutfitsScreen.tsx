@@ -48,7 +48,7 @@ const OutfitsScreen: React.FC<Props> = ({ navigation }) => {
           </View>
           
           <View style={styles.outfitInfo}>
-            <Text style={styles.itemCount}>{item.itemIds.length} items</Text>
+            <Text style={styles.itemCount}>{item.items.length} items</Text>
             {item.lastWorn && (
               <Text style={styles.lastWorn}>
                 Worn {format(new Date(item.lastWorn), 'MMM d')}
