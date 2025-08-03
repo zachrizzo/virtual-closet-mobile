@@ -40,52 +40,6 @@ api.interceptors.request.use(
           return config;
         }
         
-        // Mock clothing endpoints - DISABLED to use real backend data
-        // Uncomment this block if you want to use mock data instead of backend
-        /*
-        if (url.includes('/clothing/') && url.split('/clothing/')[1] && !url.split('/clothing/')[1].includes('/')) {
-          // Individual clothing item request (e.g., /clothing/1)
-          const itemId = url.split('/clothing/')[1];
-          const item = mockClothingItems.find(item => item.id === itemId);
-          console.log('Mock API - Getting individual item:', itemId, item?.name);
-          return Promise.reject({
-            config,
-            response: {
-              status: 200,
-              data: item,
-              headers: {},
-              config,
-              statusText: 'OK',
-            },
-            isAxiosError: true,
-            isMockResponse: true,
-          });
-        } else if (url.includes('/clothing')) {
-          // Clothing collection request (e.g., /clothing)
-          let items = [...mockClothingItems];
-          
-          // Filter by category if provided
-          if (config.params?.category) {
-            items = items.filter(item => item.category === config.params.category);
-          }
-          
-          console.log('Mock API - Returning clothing items:', items.length);
-          console.log('Mock API - First item:', items[0]?.name, 'images:', items[0]?.images);
-          
-          return Promise.reject({
-            config,
-            response: {
-              status: 200,
-              data: items,
-              headers: {},
-              config,
-              statusText: 'OK',
-            },
-            isAxiosError: true,
-            isMockResponse: true,
-          });
-        }
-        */
         
         // Mock outfits endpoint
         if (url.includes('/outfits')) {
@@ -119,30 +73,6 @@ api.interceptors.request.use(
           });
         }
         
-        // Don't mock AI virtual try-on endpoint - let it go to the real server
-        // Comment out to make real requests
-        /*
-        if (url.includes('/ai/virtual-tryon')) {
-          console.log('Mock API - Virtual try-on request:', config.data);
-          // Simulate virtual try-on response
-          return Promise.reject({
-            config,
-            response: {
-              status: 200,
-              data: {
-                generated_image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=600&fit=crop',
-                processing_time: 2.5,
-                success: true
-              },
-              headers: {},
-              config,
-              statusText: 'OK',
-            },
-            isAxiosError: true,
-            isMockResponse: true,
-          });
-        }
-        */
       }
     }
     return config;
